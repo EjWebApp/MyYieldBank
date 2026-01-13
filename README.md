@@ -85,3 +85,11 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+
+
+# vite : 코드를 가져다가 다른 걸(JavaScript와 CSS)로 변환해 주는 역할을 함.
+# http://tailwindcss.com/
+
+# shadcn
+### npx shadcn@latest init
+### npx shadcn@latest Button
