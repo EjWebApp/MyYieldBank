@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MyYieldBank — MVP 와이어프레임 (한글 풀 UI)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1a30;
+      --panel2:#0c162b;
+      --text:#eaf0ff;
+      --muted:#9fb0d0;
+      --line:rgba(255,255,255,.10);
+      --good:#38d996;
+      --bad:#ff5b6e;
+      --accent:#ffd34e;
+      --chip:#142447;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(255,211,78,.20), transparent 60%),
+                  radial-gradient(900px 500px at 100% 10%, rgba(56,217,150,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    a{color:inherit;text-decoration:none}
+    .app{max-width:1100px;margin:0 auto;padding:18px 16px 92px}
+
+    /* 상단바 */
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      position:sticky;top:0;z-index:10;padding:14px 0 12px;
+      background: linear-gradient(to bottom, rgba(11,18,32,.92), rgba(11,18,32,.55), transparent);
+      backdrop-filter: blur(8px);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(255,211,78,.95), rgba(56,217,150,.85));
+      box-shadow: var(--shadow);
+      display:grid;place-items:center;color:#0b1220;font-weight:900;
+      user-select:none;
+    }
+    .brand h1{margin:0;font-size:16px;letter-spacing:.2px}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      border:1px solid var(--line);background: rgba(255,255,255,.04);
+      padding:10px 12px;border-radius:999px;display:flex;gap:8px;align-items:center;
+      color:var(--muted);font-size:12px;white-space:nowrap;
+    }
+    .btn{
+      border:1px solid var(--line);background: rgba(255,255,255,.06);
+      padding:10px 12px;border-radius:12px;font-size:12px;color:var(--text);
+      cursor:pointer;
+    }
+    .btn:hover{filter:brightness(1.08)}
+    .btn.accent{border-color: rgba(255,211,78,.45);background: rgba(255,211,78,.12)}
+    .btn.danger{border-color: rgba(255,91,110,.45);background: rgba(255,91,110,.10)}
+
+    /* 레이아웃 */
+    .grid{display:grid;grid-template-columns: 1.35fr .85fr;gap:14px;margin-top:6px}
+    @media (max-width: 920px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);border-radius: var(--radius);
+      box-shadow: var(--shadow);overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      border-bottom:1px solid var(--line);background: rgba(0,0,0,.10);
+    }
+    .card .hd .t{display:flex;flex-direction:column;gap:3px}
+    .card .hd .t .title{font-weight:900;font-size:13px}
+    .card .hd .t .sub{font-size:12px;color:var(--muted)}
+    .card .bd{padding:14px}
+
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .kpi{
+      flex:1;min-width:160px;padding:12px;border:1px solid var(--line);
+      background: rgba(15,26,48,.55);border-radius:16px;
+    }
+    .kpi .label{font-size:12px;color:var(--muted)}
+    .kpi .value{margin-top:6px;font-size:18px;font-weight:900;letter-spacing:.2px}
+    .kpi .hint{margin-top:6px;font-size:12px;color:var(--muted)}
+    .tag{
+      display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;
+      background: rgba(20,36,71,.75);border:1px solid var(--line);
+      font-size:12px;color:var(--muted);white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--accent)}
+    .dot.good{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+
+    .list{display:flex;flex-direction:column;gap:10px}
+    .item{
+      border:1px solid var(--line);background: rgba(12,22,43,.65);
+      border-radius:16px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center;
+    }
+    .item .l{display:flex;flex-direction:column;gap:4px}
+    .item .name{font-weight:900;font-size:13px}
+    .item .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+    .item .r{text-align:right}
+    .item .price{font-weight:900}
+    .item .chg{font-size:12px;margin-top:4px}
+    .chg.good{color:var(--good)}
+    .chg.bad{color:var(--bad)}
+    .mini-btns{display:flex;gap:8px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap}
+    .mini{
+      font-size:12px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);
+      background: rgba(255,255,255,.05);color:var(--text);cursor:pointer;
+    }
+    .mini.danger{
+      border-color: rgba(255,91,110,.45);background: rgba(255,91,110,.10)
+    }
+
+    .form{display:grid;gap:10px}
+    label{font-size:12px;color:var(--muted)}
+    input, textarea, select{
+      width:100%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background: rgba(255,255,255,.04);color: var(--text);outline:none;
+    }
+    textarea{min-height:96px;resize:vertical}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 520px){.two{grid-template-columns:1fr}}
+
+    /* 하단 메뉴 */
+    .bottom-nav{
+      position:fixed;left:0;right:0;bottom:0;
+      background: rgba(11,18,32,.78);backdrop-filter: blur(10px);
+      border-top:1px solid var(--line);padding:10px 10px 14px;z-index:20;
+    }
+    .nav{max-width:1100px;margin:0 auto;display:flex;gap:8px;justify-content:space-between}
+    .nav a{
+      flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;
+      padding:10px 8px;border-radius:16px;border:1px solid transparent;
+      color:var(--muted);font-size:12px;min-width:70px;user-select:none;
+    }
+    .nav a.active{
+      color:var(--text);border-color: rgba(255,211,78,.35);background: rgba(255,211,78,.10);
+    }
+    .ico{
+      width:28px;height:28px;border-radius:12px;border:1px solid var(--line);
+      background: rgba(255,255,255,.05);display:grid;place-items:center;
+      font-weight:900;font-size:12px;
+    }
+
+    /* 모달 */
+    .modal-backdrop{
+      position:fixed;inset:0;background: rgba(0,0,0,.55);
+      display:none;align-items:center;justify-content:center;padding:16px;z-index:100;
+    }
+    .modal-backdrop.show{display:flex}
+    .modal{
+      width:min(560px, 100%);background: rgba(12,22,43,.96);
+      border:1px solid var(--line);border-radius: 22px;box-shadow: var(--shadow);overflow:hidden;
+    }
+    .modal .mh{
+      padding:14px 14px 10px;border-bottom:1px solid var(--line);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      background: rgba(0,0,0,.18);
+    }
+    .modal .mh .title{font-weight:900;font-size:13px}
+    .modal .mh .sub{font-size:12px;color:var(--muted);margin-top:3px}
+    .modal .mb{padding:14px}
+    .modal .mf{
+      padding:12px 14px;border-top:1px solid var(--line);
+      display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;background: rgba(0,0,0,.12);
+    }
+
+    /* 페이지 */
+    .page{display:none}
+    .page.active{display:block}
+    .note{font-size:12px;color:var(--muted);line-height:1.45}
+    .hintline{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:920px){.split{grid-template-columns:1fr}}
+    .small{font-size:12px;color:var(--muted)}
+    .kbd{
+      border:1px solid var(--line);background: rgba(255,255,255,.05);
+      padding:2px 8px;border-radius:999px;font-size:12px;color:var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">YB</div>
+        <div>
+          <h1>MyYieldBank</h1>
+          <p>“은행장은 너야. 앱은 규칙을 감시하고 기록만 해.”</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="pill" title="상태">
+          <span class="dot good"></span>
+          <span id="pillBanker">은행장: 나</span>
+          <span style="opacity:.6">•</span>
+          <span>모드: MVP</span>
+        </div>
+        <button class="btn accent" id="btnOpenAdd">+ 종목 추가</button>
+        <button class="btn" id="btnGoSettings">⚙ 설정</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- 홈 -->
+      <section class="page active" id="page-home">
+        <div class="grid">
+          <section class="card">
+            <div class="hd">
+              <div class="t">
+                <div class="title">대시보드 (홈)</div>
+                <div class="sub">오늘 요약 · 규칙 감시 현황</div>
+              </div>
+              <span class="tag" id="tagDefaultRules"><span class="dot"></span> 기본 규칙: +3.5% / -3%</span>
+            </div>
+
+            <div class="bd">
+              <div class="row">
+                <div class="kpi">
+                  <div class="label">규칙 알림</div>
+                  <div class="value" id="kpiAlerts">0</div>
+                  <div class="hint">익절 도달 / 손절 경고</div>
+                </div>
+                <div class="kpi">
+                  <div class="label">등록 종목</div>
+                  <div class="value" id="kpiAssets">0</div>
+                  <div class="hint">네가 등록한 종목만</div>
+                </div>
+                <div class="kpi">
+                  <div class="label">평균 수익률 (모의)</div>
+                  <div class="value" id="kpiPL">+0.0%</div>
+                  <div class="hint">와이어프레임용</div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="hintline">
+                <div>
+                  <div style="font-weight:900;margin-bottom:6px">내 은행 종목</div>
+                  <div class="note">추천 없음. 네 규칙에 따라 감시/신호만 제공.</div>
+                </div>
+                <span class="tag"><span class="dot bad"></span> 리딩/매수추천 없음</span>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div class="list" id="homeAssets"></div>
+
+              <div class="divider"></div>
+
+              <div style="font-weight:900;margin-bottom:10px">빠른 실행</div>
+              <div class="row">
+                <button class="btn" id="qaAdd">+ 종목 추가</button>
+                <button class="btn" id="qaRules">기본 규칙 수정</button>
+                <button class="btn" id="qaJournal">매매일지 열기</button>
+                <button class="btn" id="qaExport">JSON 내보내기</button>
+              </div>
+              <div class="note" style="margin-top:10px">
+                팁: 하단 메뉴로 페이지 이동. 데이터는 LocalStorage(데모)에 저장돼.
+              </div>
+            </div>
+          </section>
+
+          <aside class="card">
+            <div class="hd">
+              <div class="t">
+                <div class="title">규칙 알림 & 매매일지</div>
+                <div class="sub">판단이 아닌 기록의 공간</div>
+              </div>
+              <span class="tag">조언 없음</span>
+            </div>
+
+            <div class="bd">
+              <div style="font-weight:900;margin-bottom:10px">규칙 알림</div>
+              <div class="list" id="homeAlerts"></div>
+
+              <div class="divider"></div>
+
+              <div style="font-weight:900;margin-bottom:10px">최근 기록</div>
+              <div class="list" id="homeJournal"></div>
+
+              <div class="divider"></div>
+
+              <div style="font-weight:900;margin-bottom:8px">은행 운영 원칙</div>
+              <ul class="note" style="margin:0; padding-left:18px">
+                <li>종목 선택은 은행장(너) 책임</li>
+                <li>앱은 등록 종목만 추적</li>
+                <li>추천/랭킹/리딩 없음</li>
+                <li>규칙 감시와 기록만</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 종목 -->
+      <section class="page" id="page-assets">
+        <div class="card">
+          <div class="hd">
+            <div class="t">
+              <div class="title">종목</div>
+              <div class="sub">내 은행의 종목(직접 등록한 것만)</div>
+            </div>
+            <div class="row">
+              <span class="tag"><span class="dot good"></span> 익절</span>
+              <span class="tag"><span class="dot bad"></span> 손절</span>
+            </div>
+          </div>
+
+          <div class="bd">
+            <div class="hintline">
+              <div class="note">
+                여기는 “종목 관리” 전용. 추천/랭킹 없음. <span class="kbd">Ctrl/⌘ + K</span>로도 추가 가능.
+              </div>
+              <div class="row">
+                <button class="btn accent" id="assetsAdd">+ 종목 추가</button>
+                <button class="btn" id="assetsMock">🎲 모의 가격</button>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="list" id="assetsList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 알림 -->
+      <section class="page" id="page-alerts">
+        <div class="card">
+          <div class="hd">
+            <div class="t">
+              <div class="title">알림</div>
+              <div class="sub">규칙 감시 결과만 표시(판단은 안 함)</div>
+            </div>
+            <span class="tag" id="alertsCountTag">0건</span>
+          </div>
+          <div class="bd">
+            <div class="note" style="margin-bottom:10px">
+              실제 MVP에선 실시간 가격 연동으로 생성될 영역.
+            </div>
+            <div class="list" id="alertsList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 매매일지 -->
+      <section class="page" id="page-journal">
+        <div class="card">
+          <div class="hd">
+            <div class="t">
+              <div class="title">매매일지</div>
+              <div class="sub">수익 자랑이 아니라 “규칙 준수” 기록</div>
+            </div>
+            <button class="btn accent" id="journalNew">+ 새 기록</button>
+          </div>
+          <div class="bd">
+            <div class="split">
+              <div>
+                <div style="font-weight:900;margin-bottom:8px">기록 작성</div>
+                <div class="form">
+                  <div class="two">
+                    <div>
+                      <label>기록 유형</label>
+                      <select id="jType">
+                        <option value="buy">매수 이유</option>
+                        <option value="sell">매도 이유</option>
+                        <option value="rule">규칙 변경</option>
+                        <option value="memo">메모</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label>관련 종목 (선택)</label>
+                      <select id="jAsset"></select>
+                    </div>
+                  </div>
+                  <div>
+                    <label>기록 내용</label>
+                    <textarea id="jText" placeholder="예) +3.5% 도달하면 기계적으로 익절. 감정 개입 금지."></textarea>
+                  </div>
+                  <div class="row" style="justify-content:flex-end">
+                    <button class="btn" id="journalClear">초기화</button>
+                    <button class="btn accent" id="journalSave">저장</button>
+                  </div>
+                  <div class="note">저장은 LocalStorage(데모). 실제 서비스는 서버/DB 저장.</div>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-weight:900;margin-bottom:8px">기록 목록</div>
+                <div class="list" id="journalList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 규칙 -->
+      <section class="page" id="page-rules">
+        <div class="card">
+          <div class="hd">
+            <div class="t">
+              <div class="title">규칙</div>
+              <div class="sub">기본 규칙 + 종목별 개별 규칙</div>
+            </div>
+            <span class="tag"><span class="dot"></span> 은행장 규칙</span>
+          </div>
+          <div class="bd">
+            <div class="split">
+              <div class="card" style="border-radius:18px">
+                <div class="hd">
+                  <div class="t">
+                    <div class="title">기본 규칙</div>
+                    <div class="sub">종목별 규칙이 없으면 이 규칙 적용</div>
+                  </div>
+                </div>
+                <div class="bd">
+                  <div class="two">
+                    <div>
+                      <label>익절 (%)</label>
+                      <input id="ruleTP" type="number" step="0.1" />
+                    </div>
+                    <div>
+                      <label>손절 (%)</label>
+                      <input id="ruleSL" type="number" step="0.1" />
+                    </div>
+                  </div>
+                  <div style="height:10px"></div>
+                  <div class="row" style="justify-content:flex-end">
+                    <button class="btn" id="rulesReset">초기값</button>
+                    <button class="btn accent" id="rulesSave">저장</button>
+                  </div>
+                  <div class="note">권장 예: 익절 +3~4%, 손절 -3%</div>
+                </div>
+              </div>
+
+              <div class="card" style="border-radius:18px">
+                <div class="hd">
+                  <div class="t">
+                    <div class="title">종목별 개별 규칙</div>
+                    <div class="sub">종목 선택 후 개별 규칙 설정</div>
+                  </div>
+                </div>
+                <div class="bd">
+                  <div class="form">
+                    <div>
+                      <label>종목</label>
+                      <select id="ovAsset"></select>
+                    </div>
+                    <div class="two">
+                      <div>
+                        <label>익절 (%)</label>
+                        <input id="ovTP" type="number" step="0.1" placeholder="비우면 기본 규칙" />
+                      </div>
+                      <div>
+                        <label>손절 (%)</label>
+                        <input id="ovSL" type="number" step="0.1" placeholder="비우면 기본 규칙" />
+                      </div>
+                    </div>
+                    <div class="row" style="justify-content:flex-end">
+                      <button class="btn danger" id="ovClear">개별 규칙 해제</button>
+                      <button class="btn accent" id="ovSave">저장</button>
+                    </div>
+                    <div class="note">추천 없음. 선택/책임은 은행장(너)에게.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="note">
+              다음 단계: 실시간 가격 연동 → 규칙 엔진 → 알림(푸시) → 거래 로그/리포트.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 설정 -->
+      <section class="page" id="page-settings">
+        <div class="card">
+          <div class="hd">
+            <div class="t">
+              <div class="title">설정</div>
+              <div class="sub">은행장 정보 · 고지 · 데이터</div>
+            </div>
+            <button class="btn danger" id="wipeAll">로컬 데이터 초기화</button>
+          </div>
+          <div class="bd">
+            <div class="split">
+              <div>
+                <div style="font-weight:900;margin-bottom:8px">은행장</div>
+                <div class="form">
+                  <div>
+                    <label>은행장 이름</label>
+                    <input id="bankerName" placeholder="예) 마은자" />
+                  </div>
+                  <div>
+                    <label>운영 원칙(고정 문구)</label>
+                    <textarea id="bankerPrinciple">MyYieldBank는 투자를 대신하지 않는다.
+사용자는 은행장이자 유일한 고객이다.
+서비스는 판단이 아닌 규칙 감시와 기록만 담당한다.</textarea>
+                  </div>
+                  <div class="row" style="justify-content:flex-end">
+                    <button class="btn accent" id="saveSettings">저장</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-weight:900;margin-bottom:8px">데이터</div>
+                <div class="note" style="margin-bottom:10px">
+                  와이어프레임(데모). 실제 서비스는 보안/동의 UI가 반드시 필요.
+                </div>
+                <div class="card" style="border-radius:18px">
+                  <div class="hd">
+                    <div class="t">
+                      <div class="title">내보내기/가져오기</div>
+                      <div class="sub">JSON 파일로 백업/복원</div>
+                    </div>
+                  </div>
+                  <div class="bd">
+                    <div class="row">
+                      <button class="btn" id="exportBtn">JSON 내보내기</button>
+                      <button class="btn" id="importBtn">JSON 가져오기</button>
+                    </div>
+                    <div style="height:10px"></div>
+                    <input type="file" id="importFile" accept="application/json" style="display:none" />
+                    <div class="note">브라우저 LocalStorage에 저장됨.</div>
+                  </div>
+                </div>
+
+                <div class="divider"></div>
+                <div class="note">
+                  주소창 해시로 이동: <span class="kbd">#home</span>, <span class="kbd">#assets</span>, <span class="kbd">#alerts</span>, <span class="kbd">#journal</span>, <span class="kbd">#rules</span>, <span class="kbd">#settings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="bottom-nav">
+    <nav class="nav" aria-label="메인 메뉴">
+      <a data-route="home" class="active" href="#home"><div class="ico">🏦</div><div>홈</div></a>
+      <a data-route="assets" href="#assets"><div class="ico">📋</div><div>종목</div></a>
+      <a data-route="alerts" href="#alerts"><div class="ico">🔔</div><div>알림</div></a>
+      <a data-route="journal" href="#journal"><div class="ico">📝</div><div>매매일지</div></a>
+      <a data-route="rules" href="#rules"><div class="ico">⚙</div><div>규칙</div></a>
+    </nav>
+  </footer>
+
+  <!-- 종목 추가 모달 -->
+  <div class="modal-backdrop" id="addModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+      <div class="mh">
+        <div>
+          <div class="title" id="addTitle">종목 추가</div>
+          <div class="sub">직접 등록한 종목만 추적해</div>
+        </div>
+        <button class="btn" id="addClose">✕</button>
+      </div>
+      <div class="mb">
+        <div class="form">
+          <div class="two">
+            <div><label>종목명</label><input id="aName" placeholder="예) 삼성전자" /></div>
+            <div><label>티커(선택)</label><input id="aTicker" placeholder="예) 005930" /></div>
+          </div>
+          <div class="two">
+            <div><label>매수가(평균)</label><input id="aAvg" type="number" step="1" placeholder="예) 72000" /></div>
+            <div><label>현재가(모의)</label><input id="aNow" type="number" step="1" placeholder="예) 74520" /></div>
+          </div>
+          <div class="note">개별 규칙은 [규칙] 탭에서 종목별로 설정해.</div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn" id="addCancel">취소</button>
+        <button class="btn accent" id="addSave">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "myyieldbank_wireframe_kr_full_v1";
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const routes = ["home","assets","alerts","journal","rules","settings"];
+
+    const rid = () => Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+
+    const 기본상태 = () => ({
+      은행장: {
+        이름: "나",
+        원칙: `MyYieldBank는 투자를 대신하지 않는다.
+사용자는 은행장이자 유일한 고객이다.
+서비스는 판단이 아닌 규칙 감시와 기록만 담당한다.`
+      },
+      규칙: { 익절: 3.5, 손절: -3.0 },
+      종목: [
+        { id: rid(), 이름:"삼성전자", 티커:"005930", 매수가:72000, 현재가:74520, 개별규칙: null },
+        { id: rid(), 이름:"현대자동차", 티커:"005380", 매수가:210000, 현재가:205000, 개별규칙: { 익절:4.0, 손절:-3.0 } },
+        { id: rid(), 이름:"카카오", 티커:"035720", 매수가:52000, 현재가:52260, 개별규칙: null }
+      ],
+      일지: [
+        { id: rid(), ts: Date.now()-1000*60*18, 유형:"매수", 종목ID:null, 내용:"급등주 말고 우량주만. 룰대로만 간다." },
+        { id: rid(), ts: Date.now()-1000*60*6,  유형:"규칙", 종목ID:null, 내용:"기본 익절 +3~4%, 손절 -3% 유지. 추천은 금지." }
+      ]
+    });
+
+    function 불러오기(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return 기본상태();
+        const s = JSON.parse(raw);
+        if(!s.규칙 || !Array.isArray(s.종목) || !Array.isArray(s.일지)) return 기본상태();
+        return s;
+      }catch(e){ return 기본상태(); }
+    }
+    function 저장(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    let state = 불러오기();
+
+    function 현재라우트(){
+      const h = (location.hash || "#home").replace("#","");
+      return routes.includes(h) ? h : "home";
+    }
+    function 이동(route){ location.hash = "#" + route; }
+
+    function escapeHtml(s){
+      return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+    function truncate(s, n){
+      if(!s) return "";
+      return s.length > n ? s.slice(0,n-1) + "…" : s;
+    }
+    function 숫자원(n){
+      if(n==null || Number.isNaN(Number(n))) return "-";
+      return Number(n).toLocaleString("ko-KR");
+    }
+    function 수익률(현재가, 매수가){
+      if(!매수가 || 매수가===0) return 0;
+      return ((현재가-매수가)/매수가)*100;
+    }
+    function 적용규칙(자산){
+      return {
+        익절: 자산.개별규칙?.익절 ?? state.규칙.익절,
+        손절: 자산.개별규칙?.손절 ?? state.규칙.손절
+      };
+    }
+    function 규칙알림(자산){
+      const p = 수익률(자산.현재가, 자산.매수가);
+      const {익절, 손절} = 적용규칙(자산);
+      if(p >= 익절) return { kind:"good", title:"✅ 익절 조건 도달", msg:`${자산.이름} ${p.toFixed(1)}% (≥ +${익절}%)` };
+      if(p <= 손절) return { kind:"bad", title:"🛑 손절 조건 도달", msg:`${자산.이름} ${p.toFixed(1)}% (≤ ${손절}%)` };
+      if(p <= 손절 + 0.6) return { kind:"bad", title:"⚠ 손절 근접", msg:`${자산.이름} ${p.toFixed(1)}% (손절 ${손절}%)` };
+      return null;
+    }
+
+    function mkMini(text, onClick, danger=false){
+      const b = document.createElement("button");
+      b.className = "mini" + (danger ? " danger" : "");
+      b.textContent = text;
+      b.addEventListener("click", onClick);
+      return b;
+    }
+
+    function 알림아이템(title, msg, when, kind){
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div class="l">
+          <div class="name">${escapeHtml(title)}</div>
+          <div class="meta">${escapeHtml(msg)}</div>
+        </div>
+        <div class="r">
+          <div class="tag"><span class="dot ${kind==="good"?"good":"bad"}"></span>${escapeHtml(when)}</div>
+        </div>
+      `;
+      return el;
+    }
+
+    function 종목아이템(a, compactButtons){
+      const p = 수익률(a.현재가, a.매수가);
+      const {익절, 손절} = 적용규칙(a);
+      const chgClass = p>=익절 ? "good" : (p<=손절 || p<=손절+0.6 ? "bad" : "");
+      const chgText = (p>=0?"+":"") + p.toFixed(1) + "%";
+      const badge = p>=익절 ? "✅" : (p<=손절 ? "🛑" : (p<=손절+0.6 ? "⚠" : ""));
+
+      const el = document.createElement("div");
+      el.className = "item";
+      el.innerHTML = `
+        <div class="l">
+          <div class="name">${escapeHtml(a.이름)} ${a.티커?`<span class="small">(${escapeHtml(a.티커)})</span>`:""}</div>
+          <div class="meta">
+            <span class="tag"><span class="dot good"></span> 익절: +${익절}%</span>
+            <span class="tag"><span class="dot bad"></span> 손절: ${손절}%</span>
+            <span class="tag">매수가: ${숫자원(a.매수가)}</span>
+          </div>
+        </div>
+        <div class="r">
+          <div class="price">${숫자원(a.현재가)}</div>
+          <div class="chg ${chgClass}">${chgText} ${badge}</div>
+          <div class="mini-btns"></div>
+        </div>
+      `;
+      const btns = $(".mini-btns", el);
+
+      if(compactButtons){
+        btns.append(
+          mkMini("기록", ()=>{ 일지추가("memo", a.id, `(${a.이름}) 현재가 ${숫자원(a.현재가)} / 수익률 ${chgText}`); 이동("journal"); }),
+          mkMini("가이드", ()=>{ 매도가이드(a); })
+        );
+      }else{
+        btns.append(
+          mkMini("가격수정", ()=>{ 가격수정(a.id); }),
+          mkMini("삭제", ()=>{ 종목삭제(a.id); }, true)
+        );
+      }
+      return el;
+    }
+
+    function 일지아이템(j, compact=false, deletable=false){
+      const el = document.createElement("div");
+      el.className = "item";
+      const a = j.종목ID ? state.종목.find(x=>x.id===j.종목ID) : null;
+      const dt = new Date(j.ts);
+      const labelMap = { "매수":"매수 이유", "매도":"매도 이유", "규칙":"규칙 변경", "메모":"메모" };
+      const title = labelMap[j.유형] || "기록";
+      el.innerHTML = `
+        <div class="l">
+          <div class="name">${title}${a ? ` — ${escapeHtml(a.이름)}` : ""}</div>
+          <div class="meta">${escapeHtml(compact ? truncate(j.내용, 60) : j.내용)}</div>
+        </div>
+        <div class="r">
+          <div class="tag">${dt.toLocaleString("ko-KR",{hour:"2-digit",minute:"2-digit"})}</div>
+          <div class="mini-btns"></div>
+        </div>
+      `;
+      const btns = $(".mini-btns", el);
+      btns.append(mkMini("열기", ()=>{
+        $("#jType").value = (j.유형==="매수"?"buy":j.유형==="매도"?"sell":j.유형==="규칙"?"rule":"memo");
+        $("#jAsset").value = j.종목ID || "";
+        $("#jText").value = j.내용;
+        이동("journal");
+      }));
+      if(deletable){
+        btns.append(mkMini("삭제", ()=>{ 일지삭제(j.id); }, true));
+      }
+      return el;
+    }
+
+    function render(){
+      const r = 현재라우트();
+
+      routes.forEach(rt=>{
+        const el = $("#page-"+rt);
+        if(el) el.classList.toggle("active", rt===r);
+      });
+      $$(".nav a").forEach(a=> a.classList.toggle("active", a.dataset.route===r));
+
+      $("#pillBanker").textContent = "은행장: " + (state.은행장?.이름 || "나");
+      $("#tagDefaultRules").innerHTML = `<span class="dot"></span> 기본 규칙: +${state.규칙.익절}% / ${state.규칙.손절}%`;
+
+      const alerts = state.종목.map(규칙알림).filter(Boolean);
+      $("#kpiAlerts").textContent = alerts.length;
+      $("#kpiAssets").textContent = state.종목.length;
+
+      const avgPL = state.종목.length
+        ? state.종목.reduce((acc,a)=>acc + 수익률(a.현재가,a.매수가), 0) / state.종목.length
+        : 0;
+      $("#kpiPL").textContent = (avgPL>=0?"+":"") + avgPL.toFixed(1) + "%";
+
+      const ha = $("#homeAssets"); ha.innerHTML = "";
+      if(state.종목.length===0){
+        ha.innerHTML = `<div class="note">등록 종목이 없어. <span class="kbd">+ 종목 추가</span>로 시작해.</div>`;
+      }else{
+        state.종목.slice(0,5).forEach(a=> ha.appendChild(종목아이템(a, true)));
+      }
+
+      const hal = $("#homeAlerts"); hal.innerHTML = "";
+      if(alerts.length===0){
+        hal.appendChild(알림아이템("알림 없음", "현재 규칙 조건 충족 종목이 없어.", "—", "good"));
+      }else{
+        alerts.slice(0,3).forEach(al=> hal.appendChild(알림아이템(al.title, al.msg, al.kind==="good"?"방금":"5분", al.kind)));
+      }
+
+      const hj = $("#homeJournal"); hj.innerHTML = "";
+      const recent = [...state.일지].sort((a,b)=>b.ts-a.ts).slice(0,3);
+      if(recent.length===0){
+        hj.appendChild(알림아이템("기록 없음", "매수/매도 이유를 남겨봐.", "—", "good"));
+      }else{
+        recent.forEach(j=> hj.appendChild(일지아이템(j, true, false)));
+      }
+
+      const alist = $("#assetsList"); alist.innerHTML = "";
+      if(state.종목.length===0){
+        alist.innerHTML = `<div class="note">아직 종목이 없어. 우량주만 직접 등록해봐.</div>`;
+      }else{
+        state.종목.forEach(a=> alist.appendChild(종목아이템(a, false)));
+      }
+
+      $("#alertsCountTag").textContent = `${alerts.length}건`;
+      const alh = $("#alertsList"); alh.innerHTML = "";
+      if(alerts.length===0){
+        alh.appendChild(알림아이템("알림 없음", "조건 충족 종목이 없어.", "—", "good"));
+      }else{
+        alerts.forEach(al=> alh.appendChild(알림아이템(al.title, al.msg, al.kind==="good"?"방금":"5분", al.kind)));
+      }
+
+      const sel = $("#jAsset");
+      sel.innerHTML = `<option value="">(선택 안 함)</option>` + state.종목.map(a=>`<option value="${a.id}">${escapeHtml(a.이름)} (${escapeHtml(a.티커||"-")})</option>`).join("");
+      const jlist = $("#journalList"); jlist.innerHTML = "";
+      const all = [...state.일지].sort((a,b)=>b.ts-a.ts);
+      if(all.length===0){
+        jlist.innerHTML = `<div class="note">아직 기록이 없어. 이유/규칙/감정까지 남기면 복기하기 좋아.</div>`;
+      }else{
+        all.forEach(j=> jlist.appendChild(일지아이템(j, false, true)));
+      }
+
+      $("#ruleTP").value = state.규칙.익절;
+      $("#ruleSL").value = state.규칙.손절;
+
+      const ovSel = $("#ovAsset");
+      ovSel.innerHTML = state.종목.map(a=>`<option value="${a.id}">${escapeHtml(a.이름)} (${escapeHtml(a.티커||"-")})</option>`).join("") || `<option value="">(종목 없음)</option>`;
+      const hasAssets = state.종목.length>0;
+      ["ovTP","ovSL","ovSave","ovClear","ovAsset"].forEach(id=>{ const el = $("#"+id); if(el) el.disabled = !hasAssets; });
+
+      if(hasAssets){
+        const a = state.종목.find(x=>x.id===ovSel.value) || state.종목[0];
+        if(a && ovSel.value !== a.id) ovSel.value = a.id;
+        $("#ovTP").value = a.개별규칙?.익절 ?? "";
+        $("#ovSL").value = a.개별규칙?.손절 ?? "";
+      } else {
+        $("#ovTP").value = ""; $("#ovSL").value = "";
+      }
+
+      $("#bankerName").value = state.은행장?.이름 ?? "나";
+      $("#bankerPrinciple").value = state.은행장?.원칙 ?? "";
+    }
+
+    function 모달열기(show){
+      $("#addModal").classList.toggle("show", show);
+      if(show){ $("#aName").focus(); }
+      else { $("#aName").value=""; $("#aTicker").value=""; $("#aAvg").value=""; $("#aNow").value=""; }
+    }
+
+    function 일지추가(type, 종목ID, 내용){
+      const map = { buy:"매수", sell:"매도", rule:"규칙", memo:"메모" };
+      const t = map[type] || "메모";
+      state.일지.unshift({ id: rid(), ts: Date.now(), 유형: t, 종목ID, 내용 });
+      저장();
+    }
+
+    function 종목추가(){
+      const name = $("#aName").value.trim();
+      const ticker = $("#aTicker").value.trim();
+      const avg = Number($("#aAvg").value);
+      const now = Number($("#aNow").value);
+      if(!name){ alert("종목명은 필수야"); return; }
+      state.종목.unshift({
+        id: rid(),
+        이름: name,
+        티커: ticker,
+        매수가: Number.isFinite(avg) ? avg : 0,
+        현재가: Number.isFinite(now) ? now : (Number.isFinite(avg) ? avg : 0),
+        개별규칙: null
+      });
+      저장();
+      모달열기(false);
+      일지추가("memo", null, `종목 추가: ${name}${ticker?` (${ticker})`:""}`);
+      render();
+    }
+
+    function 종목삭제(id){
+      const a = state.종목.find(x=>x.id===id);
+      if(!a) return;
+      if(!confirm(`"${a.이름}" 종목을 삭제할까?`)) return;
+      state.종목 = state.종목.filter(x=>x.id!==id);
+      state.일지 = state.일지.map(j => j.종목ID===id ? ({...j, 종목ID:null}) : j);
+      저장();
+      일지추가("memo", null, `종목 삭제: ${a.이름}`);
+      render();
+    }
+
+    function 가격수정(id){
+      const a = state.종목.find(x=>x.id===id);
+      if(!a) return;
+      const avg = prompt(`${a.이름} 매수가(평균)`, String(a.매수가 ?? ""));
+      if(avg===null) return;
+      const now = prompt(`${a.이름} 현재가(모의)`, String(a.현재가 ?? ""));
+      if(now===null) return;
+      a.매수가 = Number(avg) || 0;
+      a.현재가 = Number(now) || 0;
+      저장();
+      render();
+    }
+
+    function 모의가격(){
+      state.종목.forEach(a=>{
+        const r = (Math.random()*6 - 3) / 100; // -3% ~ +3%
+        a.현재가 = Math.max(1, Math.round(a.현재가 * (1 + r)));
+      });
+      저장();
+      render();
+    }
+
+    function 매도가이드(a){
+      const p = 수익률(a.현재가, a.매수가);
+      const {익절, 손절} = 적용규칙(a);
+      alert([
+        `종목: ${a.이름} ${a.티커?`(${a.티커})`:""}`,
+        `매수가: ${숫자원(a.매수가)}  현재가: ${숫자원(a.현재가)}  수익률: ${(p>=0?"+":"")+p.toFixed(1)}%`,
+        ``,
+        `규칙: 익절 +${익절}% / 손절 ${손절}%`,
+        ``,
+        (p>=익절) ? "✅ 익절 조건 도달. (가이드) 규칙대로 익절 고려."
+                 : (p<=손절) ? "🛑 손절 조건 도달. (가이드) 규칙대로 손절 고려."
+                 : (p<=손절+0.6) ? "⚠ 손절 근접. 규칙 실행 준비."
+                                 : "조건 미충족. 아직은 대기."
+      ].join("\n"));
+    }
+
+    function 일지삭제(id){
+      if(!confirm("이 기록을 삭제할까?")) return;
+      state.일지 = state.일지.filter(j=>j.id!==id);
+      저장();
+      render();
+    }
+
+    function 기본규칙저장(){
+      const tp = Number($("#ruleTP").value);
+      const sl = Number($("#ruleSL").value);
+      if(!Number.isFinite(tp) || !Number.isFinite(sl)){
+        alert("규칙 값은 숫자여야 해");
+        return;
+      }
+      state.규칙.익절 = tp;
+      state.규칙.손절 = sl;
+      저장();
+      일지추가("rule", null, `기본 규칙 변경: 익절 +${tp}% / 손절 ${sl}%`);
+      render();
+    }
+    function 기본규칙초기값(){
+      state.규칙.익절 = 3.5;
+      state.규칙.손절 = -3.0;
+      저장();
+      render();
+    }
+
+    function 개별규칙저장(){
+      const id = $("#ovAsset").value;
+      const a = state.종목.find(x=>x.id===id);
+      if(!a) return;
+
+      const tpRaw = $("#ovTP").value.trim();
+      const slRaw = $("#ovSL").value.trim();
+      const tp = tpRaw==="" ? null : Number(tpRaw);
+      const sl = slRaw==="" ? null : Number(slRaw);
+
+      if((tpRaw!=="" && !Number.isFinite(tp)) || (slRaw!=="" && !Number.isFinite(sl))){
+        alert("개별 규칙은 숫자거나 비워야 해");
+        return;
+      }
+
+      a.개별규칙 = {
+        익절: tp ?? state.규칙.익절,
+        손절: sl ?? state.규칙.손절
+      };
+      저장();
+      일지추가("rule", a.id, `개별 규칙 설정: 익절 +${a.개별규칙.익절}% / 손절 ${a.개별규칙.손절}%`);
+      render();
+    }
+
+    function 개별규칙해제(){
+      const id = $("#ovAsset").value;
+      const a = state.종목.find(x=>x.id===id);
+      if(!a) return;
+      a.개별규칙 = null;
+      저장();
+      일지추가("rule", a.id, "개별 규칙 해제(기본 규칙 사용)");
+      render();
+    }
+
+    function 설정저장(){
+      state.은행장.이름 = $("#bankerName").value.trim() || "나";
+      state.은행장.원칙 = $("#bankerPrinciple").value;
+      저장();
+      일지추가("memo", null, "설정 저장");
+      alert("저장했어");
+      render();
+    }
+
+    function JSON내보내기(){
+      const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "myyieldbank_데모데이터.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    }
+
+    function JSON가져오기(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const obj = JSON.parse(reader.result);
+          if(!obj || !obj.규칙 || !Array.isArray(obj.종목) || !Array.isArray(obj.일지)){
+            alert("JSON 구조가 올바르지 않아");
+            return;
+          }
+          state = obj;
+          저장();
+          alert("가져오기 완료");
+          render();
+        }catch(e){
+          alert("가져오기에 실패했어");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function 로컬초기화(){
+      if(!confirm("로컬 데이터를 모두 초기화할까?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = 기본상태();
+      저장();
+      alert("초기화 완료");
+      render();
+    }
+
+    // 이벤트 바인딩
+    $$(".nav a").forEach(a=>{
+      a.addEventListener("click", ()=>{
+        const rt = a.dataset.route;
+        if(rt) 이동(rt);
+      });
+    });
+
+    $("#btnOpenAdd").addEventListener("click", ()=>모달열기(true));
+    $("#btnGoSettings").addEventListener("click", ()=>이동("settings"));
+
+    $("#qaAdd").addEventListener("click", ()=>모달열기(true));
+    $("#qaRules").addEventListener("click", ()=>이동("rules"));
+    $("#qaJournal").addEventListener("click", ()=>이동("journal"));
+    $("#qaExport").addEventListener("click", JSON내보내기);
+
+    $("#assetsAdd").addEventListener("click", ()=>모달열기(true));
+    $("#assetsMock").addEventListener("click", 모의가격);
+
+    $("#rulesSave").addEventListener("click", 기본규칙저장);
+    $("#rulesReset").addEventListener("click", 기본규칙초기값);
+    $("#ovAsset").addEventListener("change", render);
+    $("#ovSave").addEventListener("click", 개별규칙저장);
+    $("#ovClear").addEventListener("click", 개별규칙해제);
+
+    $("#journalNew").addEventListener("click", ()=>$("#jText").focus());
+    $("#journalClear").addEventListener("click", ()=>{ $("#jText").value=""; $("#jAsset").value=""; $("#jType").value="buy"; });
+    $("#journalSave").addEventListener("click", ()=>{
+      const type = $("#jType").value;
+      const assetId = $("#jAsset").value || null;
+      const text = $("#jText").value.trim();
+      if(!text){ alert("기록 내용이 비어있어"); return; }
+      state.일지.unshift({
+        id: rid(),
+        ts: Date.now(),
+        유형: (type==="buy"?"매수":type==="sell"?"매도":type==="rule"?"규칙":"메모"),
+        종목ID: assetId,
+        내용: text
+      });
+      저장();
+      $("#jText").value = "";
+      render();
+    });
+
+    $("#saveSettings").addEventListener("click", 설정저장);
+    $("#wipeAll").addEventListener("click", 로컬초기화);
+    $("#exportBtn").addEventListener("click", JSON내보내기);
+    $("#importBtn").addEventListener("click", ()=>$("#importFile").click());
+    $("#importFile").addEventListener("change", (e)=>{
+      const f = e.target.files?.[0];
+      if(f) JSON가져오기(f);
+      e.target.value = "";
+    });
+
+    $("#addClose").addEventListener("click", ()=>모달열기(false));
+    $("#addCancel").addEventListener("click", ()=>모달열기(false));
+    $("#addSave").addEventListener("click", 종목추가);
+    $("#addModal").addEventListener("click", (e)=>{ if(e.target.id==="addModal") 모달열기(false); });
+
+    window.addEventListener("keydown", (e)=>{
+      if(e.key==="Escape") 모달열기(false);
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==="k"){
+        e.preventDefault();
+        모달열기(true);
+      }
+    });
+
+    window.addEventListener("hashchange", render);
+
+    if(!location.hash) location.hash = "#home";
+    render();
+  </script>
+</body>
+</html>

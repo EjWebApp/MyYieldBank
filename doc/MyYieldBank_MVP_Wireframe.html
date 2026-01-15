@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MyYieldBank MVP 한글 SPA</title>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;background:#0b1220;color:#eaf0ff}
+.page{display:none;padding:20px}
+.page.active{display:block}
+.bottom{position:fixed;bottom:0;left:0;right:0;display:flex;background:#0b1220;border-top:1px solid #333}
+.bottom a{flex:1;text-align:center;padding:12px;color:#9fb0d0;text-decoration:none}
+.bottom a.active{color:#fff;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div id="home" class="page active">🏦 <b>홈</b><br>대시보드 화면</div>
+<div id="assets" class="page">📋 <b>종목</b><br>종목 관리 화면</div>
+<div id="alerts" class="page">🔔 <b>알림</b><br>규칙 알림 화면</div>
+<div id="journal" class="page">📝 <b>매매일지</b><br>기록 화면</div>
+<div id="rules" class="page">⚙ <b>규칙</b><br>규칙 설정 화면</div>
+
+<nav class="bottom">
+  <a href="#home" data-id="home" class="active">홈</a>
+  <a href="#assets" data-id="assets">종목</a>
+  <a href="#alerts" data-id="alerts">알림</a>
+  <a href="#journal" data-id="journal">매매일지</a>
+  <a href="#rules" data-id="rules">규칙</a>
+</nav>
+
+<script>
+const pages=document.querySelectorAll('.page');
+const links=document.querySelectorAll('.bottom a');
+
+function render(){
+  const id=location.hash.replace('#','')||'home';
+  pages.forEach(p=>p.classList.toggle('active',p.id===id));
+  links.forEach(a=>a.classList.toggle('active',a.dataset.id===id));
+}
+
+window.addEventListener('hashchange',render);
+render();
+</script>
+
+</body>
+</html>
