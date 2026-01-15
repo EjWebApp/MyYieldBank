@@ -44,7 +44,11 @@ export default function Navigation() {
           <NavigationMenuList>
             {menus.map((menu) => (
               <NavigationMenuItem key={menu.name}>
-                <NavigationMenuTrigger>{menu.name}</NavigationMenuTrigger>
+                <NavigationMenuLink asChild>
+                  <Link to={menu.to} className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md">
+                    {menu.name}
+                  </Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
             ))}
           </NavigationMenuList>
