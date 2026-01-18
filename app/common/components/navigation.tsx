@@ -16,7 +16,7 @@ const menus = [
   },
   {
     name: "종목",
-    to: "/jobs"
+    to: "/assets"
   },
   {
     name: "알림",

@@ -93,3 +93,13 @@ Built with ❤️ using React Router.
 # shadcn
 ### npx shadcn@latest init
 ### npx shadcn@latest Button
+
+# supabase 에 데이터 베이스 생성
+# Drizzle : ORM, 즉 객체 관계형 매퍼(Object Relational Mapper)
+    드리즐을 이용해서 타입스크립트를 쓰면 그걸 드리즐이 SQL로 변환해줌
+npm i drizzle-orm postgres
+npm i -D drizzle-kit
+schema : 데이터베이스 테이블의 정의
+
+데이터베이스 작업 순서
+schema.ts 작성 -> npm run db:generate -> npm run db:migrate ->npm run db:studio
