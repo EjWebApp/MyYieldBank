@@ -8,6 +8,13 @@
       "when": 1768546017329,
       "tag": "0000_complete_stingray",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768884808063,
+      "tag": "0001_strange_doctor_doom",
+      "breakpoints": true
     }
   ]
 }

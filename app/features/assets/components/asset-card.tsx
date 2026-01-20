@@ -1,3 +1,6 @@
+import { Link, useFetcher } from "react-router";
+import { Button } from "~/common/components/ui/button";
+
 interface AssetCardProps {
   id: string;
   name: string;
@@ -8,6 +11,10 @@ interface AssetCardProps {
   currentPrice: number;
   currentProfit: number;
   currentProfitRate: number;
+  hidden: boolean;
+  showHiddenToggle?: boolean;
+  showModifyButton?: boolean;
+  showDeleteButton?: boolean;
 }
 
 export function AssetCard({
@@ -20,9 +27,15 @@ export function AssetCard({
   currentPrice,
   currentProfit,
   currentProfitRate,
+  hidden,
+  showModifyButton = false,
+  showDeleteButton = false,
+  showHiddenToggle = false,
 }: AssetCardProps) {
   const profitColor = currentProfit >= 0 ? "text-green-600" : "text-red-600";
   const profitRateColor = currentProfitRate >= 0 ? "text-green-600" : "text-red-600";
+  const deleteFetcher = useFetcher();
+  const toggleHiddenFetcher = useFetcher();
 
   return (
     <div className="border rounded-lg p-4 space-y-3">
@@ -52,9 +65,37 @@ export function AssetCard({
           </span>
         </div>
       </div>
-      <div className="flex gap-4 text-sm text-muted-foreground pt-2 border-t">
-        <span>👍 {good}</span>
-        <span>👎 {bad}</span>
+      <div className="flex gap-2 pt-2 border-t">
+        {showModifyButton ? (
+          <Button asChild size="sm" variant="outline">
+            <Link to={`/assets/${id}/edit`}>수정</Link>
+          </Button>
+        ) : null}
+
+        {showHiddenToggle ? (
+          <toggleHiddenFetcher.Form method="post" action={`/assets/${id}/toggle-hidden`}>
+            <Button
+              type="submit"
+              size="sm"
+              variant="secondary"
+              disabled={toggleHiddenFetcher.state !== "idle"}
+            >
+              {hidden ? "보이기" : "감추기"}
+            </Button>
+          </toggleHiddenFetcher.Form>
+        ) : null}
+        {showDeleteButton ? (
+        <deleteFetcher.Form method="post" action={`/assets/${id}/delete`} className="ml-auto">
+          <Button
+            type="submit"
+            size="sm"
+            variant="destructive"
+            disabled={deleteFetcher.state !== "idle"}
+          >
+            삭제
+          </Button>
+        </deleteFetcher.Form>
+        ) : null}
       </div>
     </div>
   );

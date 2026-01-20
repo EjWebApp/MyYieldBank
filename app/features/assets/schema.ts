@@ -1,4 +1,4 @@
-import {integer, pgTable, text, timestamp} from "drizzle-orm/pg-core";
+import {boolean, integer, pgTable, text, timestamp} from "drizzle-orm/pg-core";
 
 export const assets = pgTable("assets", {
     // 자산 ID (기본키)
@@ -17,4 +17,12 @@ export const assets = pgTable("assets", {
     currentDate: timestamp().notNull(),
     // 수익률
     profitRate: integer().notNull(),
+    // 활성화
+    enabled: boolean().notNull().default(true),
+    // 감추기
+    hidden: boolean().notNull().default(false),
+    // 등록일
+    createdAt: timestamp().notNull().defaultNow(),
+    // 수정일
+    updatedAt: timestamp().notNull().defaultNow(),
 });
