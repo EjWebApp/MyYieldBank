@@ -29,6 +29,7 @@ const STOCK_CODE_MAP: Record<string, string> = {
   "SK텔레콤": "017670",
   "KT": "030200",
   "LG": "003550",
+  "한화오션": "042660",
 };
 
 export async function action({ request }: Route.ActionArgs) {
