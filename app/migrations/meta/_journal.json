@@ -15,6 +15,13 @@
       "when": 1768884808063,
       "tag": "0001_strange_doctor_doom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769146388998,
+      "tag": "0002_tired_iron_monger",
+      "breakpoints": true
     }
   ]
 }

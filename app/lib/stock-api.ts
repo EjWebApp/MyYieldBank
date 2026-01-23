@@ -233,70 +233,81 @@ async function getStockPriceFromNaver(code: string): Promise<StockPrice> {
   const url = `https://finance.naver.com/item/main.naver?code=${code}`;
   console.log(`[Stock API] 네이버 금융 URL: ${url}`);
   
-  const response = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Referer': 'https://finance.naver.com/',
-    },
-  });
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Referer': 'https://finance.naver.com/',
+      },
+    });
 
-  console.log(`[Stock API] 네이버 금융 응답 상태: ${response.status} ${response.statusText}`);
+    console.log(`[Stock API] 네이버 금융 응답 상태: ${response.status} ${response.statusText}`);
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Naver page: ${response.status}`);
-  }
+    if (!response.ok) {
+      console.error(`[Stock API] 네이버 금융 응답 실패: ${response.status} ${response.statusText}`);
+      throw new Error(`Failed to fetch Naver page: ${response.status}`);
+    }
 
-  const html = await response.text();
-  console.log(`[Stock API] HTML 길이: ${html.length}자`);
-  
-  // 네이버 금융 페이지에서 현재가 추출
-  // 현재가는 <p class="no_today"> 태그 안에 있음
-  const todayMatch = html.match(/<p[^>]*class="no_today"[^>]*>[\s\S]*?<span[^>]*class="blind">([^<]+)<\/span>/);
-  
-  // 전일 종가 찾기
-  const prevCloseMatch = html.match(/<td[^>]*>전일종가[\s\S]*?<span[^>]*class="blind">([^<]+)<\/span>/);
-  
-  // 등락액 찾기
-  const changeMatch = html.match(/<span[^>]*class="(?:blind|tah p11|tah p12)"[^>]*>([+-]?\d{1,3}(?:,\d{3})*)<\/span>/);
-  
-  // 등락률 찾기
-  const changePercentMatch = html.match(/<span[^>]*class="(?:blind|tah p11|tah p12)"[^>]*>([+-]?\d+\.\d+)%<\/span>/);
-  
-  // 종목명 찾기
-  const nameMatch = html.match(/<h2[^>]*class="wrap_company"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/);
-  
-  console.log(`[Stock API] 네이버 todayMatch (현재가):`, todayMatch?.[1]);
-  console.log(`[Stock API] 네이버 prevCloseMatch (전일종가):`, prevCloseMatch?.[1]);
-  console.log(`[Stock API] 네이버 changeMatch:`, changeMatch?.[1]);
-  console.log(`[Stock API] 네이버 changePercentMatch:`, changePercentMatch?.[1]);
-  console.log(`[Stock API] 네이버 nameMatch:`, nameMatch?.[1]);
-  
-  if (todayMatch) {
-    const currentPrice = parseInt(todayMatch[1].replace(/,/g, ''));
-    const previousClose = prevCloseMatch ? parseInt(prevCloseMatch[1].replace(/,/g, '')) : currentPrice;
-    const change = changeMatch ? parseInt(changeMatch[1].replace(/,/g, '')) : (currentPrice - previousClose);
-    const changePercent = changePercentMatch 
-      ? parseFloat(changePercentMatch[1])
-      : (previousClose !== 0 ? (change / previousClose) * 100 : 0);
-    const name = nameMatch ? nameMatch[1].trim() : "삼성전자";
-
-    const result = {
-      symbol: code,
-      name,
-      currentPrice,
-      change,
-      changePercent: Number(changePercent.toFixed(2)),
-      timestamp: new Date().toISOString(),
-    };
+    const html = await response.text();
+    console.log(`[Stock API] HTML 길이: ${html.length}자`);
     
-    console.log(`[Stock API] 네이버 금융 파싱 결과:`, JSON.stringify(result, null, 2));
-    console.log(`[Stock API] 장 상태: ${isMarketOpen() ? '개장 중 - 실시간 가격' : '마감 - 종가'}`);
-    return result;
-  }
+    // 네이버 금융 페이지에서 현재가 추출
+    // 현재가는 <p class="no_today"> 태그 안에 있음
+    const todayMatch = html.match(/<p[^>]*class="no_today"[^>]*>[\s\S]*?<span[^>]*class="blind">([^<]+)<\/span>/);
+    
+    // 전일 종가 찾기
+    const prevCloseMatch = html.match(/<td[^>]*>전일종가[\s\S]*?<span[^>]*class="blind">([^<]+)<\/span>/);
+    
+    // 등락액 찾기
+    const changeMatch = html.match(/<span[^>]*class="(?:blind|tah p11|tah p12)"[^>]*>([+-]?\d{1,3}(?:,\d{3})*)<\/span>/);
+    
+    // 등락률 찾기
+    const changePercentMatch = html.match(/<span[^>]*class="(?:blind|tah p11|tah p12)"[^>]*>([+-]?\d+\.\d+)%<\/span>/);
+    
+    // 종목명 찾기
+    const nameMatch = html.match(/<h2[^>]*class="wrap_company"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/);
+    
+    console.log(`[Stock API] 네이버 todayMatch (현재가):`, todayMatch?.[1]);
+    console.log(`[Stock API] 네이버 prevCloseMatch (전일종가):`, prevCloseMatch?.[1]);
+    console.log(`[Stock API] 네이버 changeMatch:`, changeMatch?.[1]);
+    console.log(`[Stock API] 네이버 changePercentMatch:`, changePercentMatch?.[1]);
+    console.log(`[Stock API] 네이버 nameMatch:`, nameMatch?.[1]);
+    
+    if (todayMatch) {
+      const currentPrice = parseInt(todayMatch[1].replace(/,/g, ''));
+      const previousClose = prevCloseMatch ? parseInt(prevCloseMatch[1].replace(/,/g, '')) : currentPrice;
+      const change = changeMatch ? parseInt(changeMatch[1].replace(/,/g, '')) : (currentPrice - previousClose);
+      const changePercent = changePercentMatch 
+        ? parseFloat(changePercentMatch[1])
+        : (previousClose !== 0 ? (change / previousClose) * 100 : 0);
+      const name = nameMatch ? nameMatch[1].trim() : "삼성전자";
 
-  console.error(`[Stock API] 네이버 금융 파싱 실패 - todayMatch를 찾을 수 없음`);
-  throw new Error('Could not parse stock price from Naver');
+      const result = {
+        symbol: code,
+        name,
+        currentPrice,
+        change,
+        changePercent: Number(changePercent.toFixed(2)),
+        timestamp: new Date().toISOString(),
+      };
+      
+      console.log(`[Stock API] 네이버 금융 파싱 성공, 결과:`, JSON.stringify(result, null, 2));
+      console.log(`[Stock API] 장 상태: ${isMarketOpen() ? '개장 중 - 실시간 가격' : '마감 - 종가'}`);
+      return result;
+    }
+
+    // todayMatch를 찾지 못한 경우 HTML 일부를 로그로 출력
+    const htmlSample = html.substring(0, 2000);
+    console.error(`[Stock API] 네이버 금융 파싱 실패 - todayMatch를 찾을 수 없음`);
+    console.error(`[Stock API] HTML 샘플 (처음 2000자):`, htmlSample);
+    throw new Error('Could not parse stock price from Naver - todayMatch not found');
+  } catch (error) {
+    console.error(`[Stock API] getStockPriceFromNaver 에러:`, error);
+    console.error(`[Stock API] 에러 타입:`, error instanceof Error ? error.constructor.name : typeof error);
+    console.error(`[Stock API] 에러 메시지:`, error instanceof Error ? error.message : String(error));
+    throw error; // 에러를 다시 던져서 상위 catch에서 처리하도록
+  }
 }
 
 /**

@@ -1,12 +1,7 @@
 import { useLoaderData, useRevalidator } from "react-router";
 import { useEffect } from "react";
-import { Button } from "../../common/components/ui/button";
 import { AssetCard } from "../../features/assets/components/asset-card";
-import { getStockPrice } from "~/lib/stock-api";
 import type { Route } from "./+types/home-page";
-import { db } from "~/db";
-import { assets } from "../../features/assets/schema";
-import { isMarketOpen } from "~/lib/utils";
 import { getAssetWithPrices } from "~/lib/stock-util";
 
 export async function loader({}: Route.LoaderArgs) {
@@ -18,15 +13,11 @@ export default function HomePage() {
   const { assets } = useLoaderData<typeof loader>();
   const revalidator = useRevalidator();
 
-  // 장중일 때만 30초마다 업데이트, 장 마감 후에는 5분마다 업데이트
+  // 3초마다 업데이트
   useEffect(() => {
-    const updateInterval = isMarketOpen() ? 5000 : 300000; // 장중: 5초, 마감 후: 5분 
-    
-    console.log(`[HomePage] 장 상태: ${isMarketOpen() ? '개장' : '마감'}, 업데이트 주기: ${updateInterval / 1000}초`);
-    
     const interval = setInterval(() => {
       revalidator.revalidate();
-    }, updateInterval);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [revalidator]);
