@@ -1,1 +1,0 @@
-ALTER TABLE "assets" RENAME COLUMN "profit_rate" TO "my_current_rate";

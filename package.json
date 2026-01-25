@@ -9,7 +9,8 @@
     "typecheck": "react-router typegen && tsc",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:apply": "node scripts/apply-migration.js"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.14",

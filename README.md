@@ -103,3 +103,5 @@ schema : 데이터베이스 테이블의 정의
 
 데이터베이스 작업 순서
 schema.ts 작성 -> npm run db:generate -> npm run db:migrate ->npm run db:studio
+npx drizzle-kit push
+npm run db:apply 명령으로 직접 SQL을 실행

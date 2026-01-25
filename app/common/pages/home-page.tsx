@@ -37,7 +37,7 @@ export default function HomePage() {
       <div className="grid grid-cols-3 gap-4">
         {assets.map((asset) => {
           return asset.hidden ? null : (
-            <AssetCard key={asset.id} {...asset} showModifyButton={true} showDeleteButton={true} showHiddenToggle={true} />
+            <AssetCard key={asset.id} {...asset} />
           );
         })}
       </div>

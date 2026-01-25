@@ -3,8 +3,6 @@ import { Link, useLoaderData, useRevalidator } from "react-router";
 import type { Route } from "./+types/assets-page";
 import { AssetCard } from "../components/asset-card";
 import { Hero } from "~/common/components/hero";
-import { db } from "~/db";
-import { assets } from "../schema";
 import { getAssetWithPrices } from "~/lib/stock-util";
 import { useEffect } from "react";
 import { isMarketOpen } from "~/lib/utils";
@@ -50,24 +48,21 @@ export default function AssetsPage() {
             </Button>
         </div>
       <div className="grid grid-cols-3 gap-4">
-        {assets.map((asset) => (
-          <AssetCard
-            key={asset.id}
-            id={asset.id}
-            name={asset.name}
-            purchaseDate={asset.purchaseDate}
-            purchasePrice={asset.purchasePrice}
-            good={asset.good}
-            bad={asset.bad}
-            currentPrice={asset.currentPrice}
-            currentProfit={asset.currentProfit}
-            currentProfitRate={asset.currentProfitRate}
-            hidden={asset.hidden}
-            showModifyButton={true}
-            showDeleteButton={true}
-            showHiddenToggle={true}
-          />
-        ))}
+        {assets && assets.length > 0 ? (
+          assets.map((asset) => (
+            <AssetCard
+              key={asset.id} 
+              {...asset}
+              showModifyButton={true}
+              showDeleteButton={true}
+              showHiddenToggle={true}
+            />
+          ))
+        ) : (
+          <div className="col-span-3 text-center text-muted-foreground py-8">
+            등록된 종목이 없습니다.
+          </div>
+        )}
       </div>      
     </div>
   );

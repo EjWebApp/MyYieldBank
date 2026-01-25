@@ -44,9 +44,21 @@ export async function action({ request }: Route.ActionArgs) {
   const currentPrice = stockPrice.currentPrice;
   const currentDate = new Date();
   
-  // 수익률 계산
+  // 수익률 계산 (소수점 둘째 자리)
   const profit = currentPrice - purchasePrice;
-  const profitRate = purchasePrice !== 0 ? Math.round((profit / purchasePrice) * 100) : 0;
+  const profit_rate = purchasePrice !== 0 
+    ? parseFloat(((profit / purchasePrice) * 100).toFixed(2))
+    : 0;
+  
+  // 익절률, 손절률 가져오기
+  const takeProfitRateStr = formData.get("takeProfitRate") as string;
+  const stopLossRateStr = formData.get("stopLossRate") as string;
+  const take_profit_rate = takeProfitRateStr && takeProfitRateStr.trim() !== "" 
+    ? parseFloat(parseFloat(takeProfitRateStr).toFixed(2))
+    : 0;
+  const stop_loss_rate = stopLossRateStr && stopLossRateStr.trim() !== "" 
+    ? parseFloat(parseFloat(stopLossRateStr).toFixed(2))
+    : 0;
 
   // 데이터베이스에 저장
   await db.insert(assets).values({
@@ -56,7 +68,9 @@ export async function action({ request }: Route.ActionArgs) {
     purchaseDate,
     currentPrice,
     currentDate,
-    profitRate,
+    profit_rate: profit_rate.toString(),
+    take_profit_rate: take_profit_rate.toString(),
+    stop_loss_rate: stop_loss_rate.toString(),
   });
 
   return redirect("/assets");
@@ -157,6 +171,42 @@ export default function NewAssetPage() {
               required
               className="w-full px-3 py-2 border rounded-md"
             />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="takeProfitRate" className="text-sm font-medium">
+              익절률 (%)
+            </label>
+            <input
+              type="number"
+              id="takeProfitRate"
+              name="takeProfitRate"
+              min="0"
+              step="0.01"
+              placeholder="예: 10.50"
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            <p className="text-xs text-muted-foreground">
+              목표 수익률을 입력하세요 (소수점 둘째 자리까지)
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="stopLossRate" className="text-sm font-medium">
+              손절률 (%)
+            </label>
+            <input
+              type="number"
+              id="stopLossRate"
+              name="stopLossRate"
+              max="0"
+              step="0.01"
+              placeholder="예: -5.00"
+              className="w-full px-3 py-2 border rounded-md"
+            />
+            <p className="text-xs text-muted-foreground">
+              손실 한도를 입력하세요 (소수점 둘째 자리까지, 음수로 입력)
+            </p>
           </div>
 
           <div className="flex gap-4 pt-4">

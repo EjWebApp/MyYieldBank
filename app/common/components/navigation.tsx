@@ -1,13 +1,5 @@
 import { Link } from "react-router";
 import { Separator } from "~/common/components/ui/separator";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "./ui/navigation-menu";
 
 const menus = [
   {
@@ -40,19 +32,18 @@ export default function Navigation() {
           My Yield Bank
         </Link>
         <Separator orientation="vertical" className="h-6 mx-4" />
-        <NavigationMenu>
-          <NavigationMenuList>
-            {menus.map((menu) => (
-              <NavigationMenuItem key={menu.name}>
-                <NavigationMenuLink asChild>
-                  <Link to={menu.to} className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md">
-                    {menu.name}
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+        <div className="flex items-center space-x-1">
+          {menus.map((menu) => (
+            <Link
+              key={menu.name}
+              to={menu.to}
+              reloadDocument={false}
+              className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md"
+            >
+              {menu.name}
+            </Link>
+          ))}
+        </div>
       </div>
     </nav>
   );

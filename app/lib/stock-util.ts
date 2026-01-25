@@ -33,8 +33,8 @@ export async function getAssetWithPrices() {
         // 에러 발생 시 기존 값 사용
         return {
           ...asset,
-          currentProfit: asset.currentPrice - asset.purchasePrice,
-          currentProfitRate: asset.profitRate,
+          currentProfit: -999,
+          currentProfitRate: -999,
         };
       }
     })
@@ -51,8 +51,10 @@ export async function getAssetWithPrices() {
       bad: 0,
       currentPrice: asset.currentPrice,
       currentProfit: asset.currentProfit,
-      currentProfitRate: asset.currentProfitRate,
+      currentProfitRate: asset.currentProfitRate ?? 0,
       hidden: asset.hidden,
+      take_profit_rate: asset.take_profit_rate != null ? parseFloat(asset.take_profit_rate.toString()) || 0 : 0,
+      stop_loss_rate: asset.stop_loss_rate != null ? parseFloat(asset.stop_loss_rate.toString()) || 0 : 0,
     })),
   };
 }

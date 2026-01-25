@@ -1,5 +1,5 @@
 {
-  "id": "0d81f9ee-54e4-478c-a1c5-2741a34d8db9",
+  "id": "e1b59ae2-35bb-4d1e-a21b-8c92e4ec5b23",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -61,11 +61,54 @@
           "primaryKey": false,
           "notNull": true
         },
-        "profitRate": {
-          "name": "profitRate",
-          "type": "integer",
+        "profit_rate": {
+          "name": "profit_rate",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'0'"
+        },
+        "take_profit_rate": {
+          "name": "take_profit_rate",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "stop_loss_rate": {
+          "name": "stop_loss_rate",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0'"
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "hidden": {
+          "name": "hidden",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},

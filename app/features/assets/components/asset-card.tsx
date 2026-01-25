@@ -15,6 +15,8 @@ interface AssetCardProps {
   showHiddenToggle?: boolean;
   showModifyButton?: boolean;
   showDeleteButton?: boolean;
+  stop_loss_rate:number;
+  take_profit_rate:number;
 }
 
 export function AssetCard({
@@ -22,8 +24,6 @@ export function AssetCard({
   name,
   purchaseDate,
   purchasePrice,
-  good,
-  bad,
   currentPrice,
   currentProfit,
   currentProfitRate,
@@ -31,9 +31,12 @@ export function AssetCard({
   showModifyButton = false,
   showDeleteButton = false,
   showHiddenToggle = false,
+  stop_loss_rate,
+  take_profit_rate,
 }: AssetCardProps) {
   const profitColor = currentProfit >= 0 ? "text-green-600" : "text-red-600";
-  const profitRateColor = currentProfitRate >= 0 ? "text-green-600" : "text-red-600";
+  const profitRateValue = currentProfitRate ?? 0;
+  const profitRateColor = profitRateValue >= 0 ? "text-green-600" : "text-red-600";
   const deleteFetcher = useFetcher();
   const toggleHiddenFetcher = useFetcher();
 
@@ -61,7 +64,19 @@ export function AssetCard({
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">수익률</span>
           <span className={`font-semibold ${profitRateColor}`}>
-            {currentProfitRate >= 0 ? "+" : ""}{currentProfitRate.toFixed(2)}%
+            {profitRateValue >= 0 ? "+" : ""}{profitRateValue.toFixed(2)}%
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">익절률</span>
+          <span className="font-semibold text-blue-600">
+            {(take_profit_rate ?? 0).toFixed(2)}%
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">손절률</span>
+          <span className="font-semibold text-red-600">
+            {(stop_loss_rate ?? 0).toFixed(2)}%
           </span>
         </div>
       </div>
