@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
-import { Route } from "./+types/message-page";
+import type { Route } from "./+types/message-page";
 import {
   Avatar,
   AvatarFallback,

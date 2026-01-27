@@ -1,5 +1,5 @@
 import { Form } from "react-router";
-import { Route } from "./+types/settings-page";
+import type { Route } from "./+types/settings-page";
 import InputPair from "~/common/components/input-pair";
 import SelectPair from "~/common/components/select-pair";
 import { useState } from "react";

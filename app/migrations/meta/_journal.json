@@ -15,6 +15,13 @@
       "when": 1737619200000,
       "tag": "0001_update_profit_rates",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769499666312,
+      "tag": "0002_elite_nova",
+      "breakpoints": true
     }
   ]
 }

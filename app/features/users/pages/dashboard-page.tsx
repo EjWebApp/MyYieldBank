@@ -1,15 +1,17 @@
-import { Line } from "recharts";
-import { ChartConfig, ChartTooltipContent } from "~/common/components/ui/chart";
-import { ChartTooltip } from "~/common/components/ui/chart";
+import { Line, CartesianGrid, LineChart, XAxis } from "recharts";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "~/common/components/ui/chart";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "~/common/components/ui/card";
-import { Route } from "./+types/dashboard-page";
-import { ChartContainer } from "~/common/components/ui/chart";
-import { CartesianGrid, LineChart, XAxis } from "recharts";
+import type { Route } from "./+types/dashboard-page";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Dashboard | wemake" }];
@@ -54,7 +56,7 @@ export default function DashboardPage() {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickFormatter={(value: string) => value.slice(0, 3)}
               />
               <Line
                 dataKey="views"

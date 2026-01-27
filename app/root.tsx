@@ -5,13 +5,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
   useLocation,
+  useNavigation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./common/components/navigation";
 import { Settings } from "luxon";
+import { makeSSRClient } from "./supa-client";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,6 +29,13 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { client } = makeSSRClient(request);
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  return { user };
+};
 export function Layout({ children }: { children: React.ReactNode }) {
   Settings.defaultLocale = "ko-KR";
   Settings.defaultZone = "Asia/Seoul";
@@ -47,13 +57,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+export default function App({loaderData}: Route.ComponentProps) {
   const { pathname } = useLocation();
+  const navigation=useNavigation();
+  const isLoading=navigation.state==="loading";
+  const isLoggedIn=loaderData.user!==null;
   return (
     <div className={pathname.includes("/auth/") ? "" : "px-20 py-28"}>
       {
         pathname.includes("/auth/")? null:
-          ( <Navigation isLoggedIn={false} hasNotification={false} hasMessage={false} />)
+          ( <Navigation isLoggedIn={isLoggedIn} hasNotification={false} hasMessage={false} />)
       }
       <Outlet />
     </div>

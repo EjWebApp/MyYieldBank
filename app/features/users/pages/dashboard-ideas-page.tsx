@@ -1,5 +1,5 @@
 import { IdeaCard } from "~/features/ideas/components/idea-card";
-import { Route } from "./+types/dashboard-ideas-page";
+import type { Route } from "./+types/dashboard-ideas-page";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "My Ideas | wemake" }];

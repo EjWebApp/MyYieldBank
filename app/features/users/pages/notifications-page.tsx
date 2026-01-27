@@ -1,4 +1,4 @@
-import { Route } from "./+types/notifications-page";
+import type { Route } from "./+types/notifications-page";
 import { NotificationCard } from "../components/notification-card";
 
 export const meta: Route.MetaFunction = () => {
