@@ -6,13 +6,17 @@ import { db } from "~/db";
 import { assets } from "../schema";
 import { getStockPrice } from "~/lib/stock-api";
 import { useState } from "react";
-
+import { Calendar } from "~/common/components/ui/calendar";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 // 주요 종목명-종목코드 매핑
 const STOCK_CODE_MAP: Record<string, string> = {
   "삼성전자": "005930",
   "SK하이닉스": "000660",
   "NAVER": "035420",
   "카카오": "035720",
+  "카카오페이": "377300",
   "LG에너지솔루션": "373220",
   "현대차": "005380",
   "기아": "000270",
@@ -88,6 +92,8 @@ export default function NewAssetPage() {
   const isSubmitting = navigation.state === "submitting";
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputName = e.target.value;
@@ -98,6 +104,24 @@ export default function NewAssetPage() {
     if (matchedCode) {
       setSymbol(matchedCode);
     }
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (date <= today) {
+        setSelectedDate(date);
+        setIsCalendarOpen(false);
+      }
+    }
+  };
+
+  const handleTodayClick = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setSelectedDate(today);
+    setIsCalendarOpen(false);
   };
 
   return (
@@ -165,12 +189,65 @@ export default function NewAssetPage() {
               구매 일자 <span className="text-red-500">*</span>
             </label>
             <input
-              type="date"
+              type="hidden"
               id="purchaseDate"
               name="purchaseDate"
               required
-              className="w-full px-3 py-2 border rounded-md"
+              value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
             />
+            <div className="relative">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="flex-1 px-3 py-2 border rounded-md bg-background min-h-[40px] flex items-center cursor-pointer"
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                >
+                  {selectedDate ? (
+                    format(selectedDate, "yyyy년 MM월 dd일", { locale: ko })
+                  ) : (
+                    <span className="text-muted-foreground">날짜를 선택하세요</span>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                  className="h-[40px] w-[40px]"
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                </Button>
+              </div>
+              {isCalendarOpen && (
+                <div className="absolute z-10 mt-2 bg-background border rounded-md shadow-lg">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateSelect}
+                    disabled={(date) => date > new Date()}
+                    className="rounded-md"
+                    locale={ko}
+                    components={{
+                      Footer: () => (
+                        <div className="p-2 border-t">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleTodayClick}
+                            className="w-full"
+                          >
+                            오늘
+                          </Button>
+                        </div>
+                      ),
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              달력 아이콘을 클릭하여 날짜를 선택하세요
+            </p>
           </div>
 
           <div className="space-y-2">

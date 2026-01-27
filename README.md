@@ -105,3 +105,10 @@ schema : 데이터베이스 테이블의 정의
 schema.ts 작성 -> npm run db:generate -> npm run db:migrate ->npm run db:studio
 npx drizzle-kit push
 npm run db:apply 명령으로 직접 SQL을 실행
+
+# 2026-01-27
+## 7.1 : Server Side vs Cliden Side Auth
+    [Browser]
+    Client Cookies ---> Supabase Server ---> Who is the user?
+    [Server]
+    Browser Send Cookies ---> loader() receives cookies ----> Supabase SSC (cookies) ---> Supabase Server ---> Who is the user?

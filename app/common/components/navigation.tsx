@@ -1,5 +1,14 @@
 import { Link } from "react-router";
 import { Separator } from "~/common/components/ui/separator";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from "~/common/components/ui/navigation-menu";
+import { LogOutIcon } from "lucide-react";
+import { Button } from "~/common/components/ui/button";
 
 const menus = [
   {
@@ -24,7 +33,17 @@ const menus = [
   }
 ];
 
-export default function Navigation() {
+interface NavigationProps {
+  isLoggedIn: boolean;
+  hasNotification: boolean;
+  hasMessage: boolean;
+}
+
+export default function Navigation({
+  isLoggedIn,
+  hasNotification,
+  hasMessage,
+}: NavigationProps) {
   return (
     <nav className="flex px-20 h-16 items-center justify-between backdrop-blur fixed top-0 left-0 right-0 z-50 bg-background/50">
       <div className="flex items-center">
@@ -32,19 +51,38 @@ export default function Navigation() {
           My Yield Bank
         </Link>
         <Separator orientation="vertical" className="h-6 mx-4" />
-        <div className="flex items-center space-x-1">
-          {menus.map((menu) => (
-            <Link
-              key={menu.name}
-              to={menu.to}
-              reloadDocument={false}
-              className="px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground rounded-md"
-            >
-              {menu.name}
-            </Link>
-          ))}
-        </div>
+        <NavigationMenu>
+          <NavigationMenuList>
+            {menus.map((menu) => (
+              <NavigationMenuItem key={menu.name}>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                  <Link to={menu.to} reloadDocument={false}>
+                    {menu.name}
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
       </div>
+      {isLoggedIn ? (
+        <div className="flex items-center">
+          <Button size="icon" variant="ghost" asChild className="relative">
+            <Link to="/auth/logout">Logout
+            <LogOutIcon className="size-4" />
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-4">
+          <Button asChild variant="secondary">
+            <Link to="/auth/login">Login</Link>
+          </Button>
+          <Button asChild >
+            <Link to="/auth/join">Join</Link>
+          </Button>
+        </div>
+      )}
     </nav>
   );
 }
