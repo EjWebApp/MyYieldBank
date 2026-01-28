@@ -17,6 +17,7 @@ export default [
         layout("features/auth/layouts/auth-layout.tsx", [
             route("/login", "features/auth/pages/login-page.tsx"),
             route("/join", "features/auth/pages/join-page.tsx"),
+            route("/logout", "features/auth/pages/logout-page.tsx"),
             ...prefix("/opt", [
                 route("/start", "features/auth/pages/opt-start-page.tsx"),
                 route("/complete", "features/auth/pages/opt-complete-page.tsx"),

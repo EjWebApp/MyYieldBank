@@ -84,7 +84,7 @@ if (atIndex > 0) {
 
 export default defineConfig({
     schema: "./app/features/**/schema.ts",
-    out: "./app/migrations",
+    out: "./app/sql/migrations",
     dialect: "postgresql",
     dbCredentials: {
         url: cleanDatabaseUrl,

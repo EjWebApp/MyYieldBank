@@ -63,7 +63,7 @@ export default function App({loaderData}: Route.ComponentProps) {
   const isLoading=navigation.state==="loading";
   const isLoggedIn=loaderData.user!==null;
   return (
-    <div className={pathname.includes("/auth/") ? "" : "px-20 py-28"}>
+    <div className={pathname.includes("/auth/") ? "" : "px-5 py-28 lg:px-20"}>
       {
         pathname.includes("/auth/")? null:
           ( <Navigation isLoggedIn={isLoggedIn} hasNotification={false} hasMessage={false} />)
