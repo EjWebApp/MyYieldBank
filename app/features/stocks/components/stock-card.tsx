@@ -1,13 +1,11 @@
 import { Link, useFetcher } from "react-router";
 import { Button } from "~/common/components/ui/button";
 
-interface AssetCardProps {
+interface StockCardProps {
   id: string;
   name: string;
   purchaseDate: string;
   purchasePrice: number;
-  good: number;
-  bad: number;
   currentPrice: number;
   currentProfit: number;
   currentProfitRate: number;
@@ -19,7 +17,7 @@ interface AssetCardProps {
   take_profit_rate:number;
 }
 
-export function AssetCard({
+export function StockCard({
   id,
   name,
   purchaseDate,
@@ -33,7 +31,7 @@ export function AssetCard({
   showHiddenToggle = false,
   stop_loss_rate,
   take_profit_rate,
-}: AssetCardProps) {
+}: StockCardProps) {
   const profitColor = currentProfit >= 0 ? "text-green-600" : "text-red-600";
   const profitRateValue = currentProfitRate ?? 0;
   const profitRateColor = profitRateValue >= 0 ? "text-green-600" : "text-red-600";
@@ -49,16 +47,16 @@ export function AssetCard({
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">구매가</span>
-          <span className="font-semibold">{purchasePrice.toLocaleString()}원</span>
+          <span className="font-semibold">{(purchasePrice ?? 0).toLocaleString()}원</span>
         </div>        
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">현재가</span>
-          <span className="font-semibold">{currentPrice.toLocaleString()}원</span>
+          <span className="font-semibold">{(currentPrice ?? 0).toLocaleString()}원</span>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">수익</span>
           <span className={`font-semibold ${profitColor}`}>
-            {currentProfit >= 0 ? "+" : ""}{currentProfit.toLocaleString()}원
+            {(currentProfit ?? 0) >= 0 ? "+" : ""}{(currentProfit ?? 0).toLocaleString()}원
           </span>
         </div>
         <div className="flex justify-between items-center">
@@ -83,12 +81,12 @@ export function AssetCard({
       <div className="flex gap-2 pt-2 border-t">
         {showModifyButton ? (
           <Button asChild size="sm" variant="outline">
-            <Link to={`/assets/${id}/edit`}>수정</Link>
+            <Link to={`/stocks/${id}/edit`}>수정</Link>
           </Button>
         ) : null}
 
         {showHiddenToggle ? (
-          <toggleHiddenFetcher.Form method="post" action={`/assets/${id}/toggle-hidden`}>
+          <toggleHiddenFetcher.Form method="post" action={`/stocks/${id}/toggle-hidden`}>
             <Button
               type="submit"
               size="sm"
@@ -100,7 +98,7 @@ export function AssetCard({
           </toggleHiddenFetcher.Form>
         ) : null}
         {showDeleteButton ? (
-        <deleteFetcher.Form method="post" action={`/assets/${id}/delete`} className="ml-auto">
+        <deleteFetcher.Form method="post" action={`/stocks/${id}/delete`} className="ml-auto">
           <Button
             type="submit"
             size="sm"

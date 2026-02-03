@@ -1,10 +1,6 @@
 import { Link } from "react-router";
 import { Separator } from "~/common/components/ui/separator";
 import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
   navigationMenuTriggerStyle,
 } from "~/common/components/ui/navigation-menu";
 import { LogOutIcon } from "lucide-react";
@@ -17,7 +13,7 @@ const menus = [
   },
   {
     name: "종목",
-    to: "/assets"
+    to: "/stocks"
   },
   {
     name: "알림",
@@ -51,19 +47,17 @@ export default function Navigation({
           My Yield Bank
         </Link>
         <Separator orientation="vertical" className="h-6 mx-4" />
-        <NavigationMenu>
-          <NavigationMenuList>
-            {menus.map((menu) => (
-              <NavigationMenuItem key={menu.name}>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to={menu.to} reloadDocument={false}>
-                    {menu.name}
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+        <div className="flex items-center gap-2">
+          {menus.map((menu) => (
+            <Link 
+              key={menu.name}
+              to={menu.to} 
+              className={navigationMenuTriggerStyle()}
+            >
+              {menu.name}
+            </Link>
+          ))}
+        </div>
       </div>
       {isLoggedIn ? (
         <div className="flex items-center">

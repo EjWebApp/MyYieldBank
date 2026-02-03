@@ -3,12 +3,12 @@ import { type RouteConfig, index, route, prefix, layout } from "@react-router/de
 export default [
     index("common/pages/index-page.tsx"),
     route("home", "common/pages/home-page.tsx"),
-    route("assets", "features/assets/pages/assets-page.tsx"),
-    route("assets/new", "features/assets/pages/new-asset-page.tsx"),
-    route("assets/:id/edit", "features/assets/pages/edit-asset-page.tsx"),
-    route("assets/:id/delete", "features/assets/pages/delete-asset.tsx"),
+    route("stocks", "features/stocks/pages/stocks-page.tsx"),
+    route("stocks/new", "features/stocks/pages/new-stock-page.tsx"),
+    route("stocks/:id/edit", "features/stocks/pages/edit-stock-page.tsx"),
+    route("stocks/:id/delete", "features/stocks/pages/delete-stock.tsx"),
 
-    route("assets/:id/toggle-hidden", "features/assets/pages/toggle-hidden-asset.tsx"),
+    route("stocks/:id/toggle-hidden", "features/stocks/pages/toggle-hidden-stock.tsx"),
     ...prefix("/ideas", [
         index("features/ideas/pages/ideas-page.tsx"),
         route("/:ideaId", "features/ideas/pages/idea-page.tsx"),

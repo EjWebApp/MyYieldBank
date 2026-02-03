@@ -1,57 +1,38 @@
-import type { Route } from "./+types/new-asset-page";
+import type { Route } from "./+types/new-stock-page";
 import { Form, useNavigation, redirect } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { Hero } from "~/common/components/hero";
 import { db } from "~/db";
-import { assets } from "../schema";
+import { stockHoldings } from "../schema";
 import { getStockPrice } from "~/lib/stock-api";
 import { useState } from "react";
 import { Calendar } from "~/common/components/ui/calendar";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-// 주요 종목명-종목코드 매핑
-const STOCK_CODE_MAP: Record<string, string> = {
-  "삼성전자": "005930",
-  "SK하이닉스": "000660",
-  "NAVER": "035420",
-  "카카오": "035720",
-  "카카오페이": "377300",
-  "LG에너지솔루션": "373220",
-  "현대차": "005380",
-  "기아": "000270",
-  "POSCO홀딩스": "005490",
-  "셀트리온": "068270",
-  "KB금융": "105560",
-  "신한지주": "055550",
-  "하나금융지주": "086790",
-  "LG전자": "066570",
-  "삼성물산": "028260",
-  "아모레퍼시픽": "090430",
-  "한화솔루션": "009830",
-  "LG화학": "051910",
-  "SK텔레콤": "017670",
-  "KT": "030200",
-  "LG": "003550",
-  "한화오션": "042660",
-};
+import { getStockCatalogSync, getStockCodeByName } from "~/lib/stock-catalog";
+import { makeSSRClient } from "~/supa-client";
+import { getLoggedInUserId } from "~/features/users/queries";
 
 export async function action({ request }: Route.ActionArgs) {
+  // 사용자 인증 확인
+  const { client } = makeSSRClient(request);
+  const profileId = await getLoggedInUserId(client);
   const formData = await request.formData();
   const symbol = formData.get("symbol") as string;
   const name = formData.get("name") as string;
-  const purchasePrice = parseInt(formData.get("purchasePrice") as string);
-  const purchaseDate = new Date(formData.get("purchaseDate") as string);
+  const purchase_price = parseInt(formData.get("purchasePrice") as string);
+  const purchase_date = new Date(formData.get("purchaseDate") as string);
 
   // 현재 주식 가격 가져오기
   const stockPrice = await getStockPrice(symbol);
-  const currentPrice = stockPrice.currentPrice;
-  const currentDate = new Date();
+  const current_price = stockPrice.currentPrice;
+  const current_date = new Date();
   
   // 수익률 계산 (소수점 둘째 자리)
-  const profit = currentPrice - purchasePrice;
-  const profit_rate = purchasePrice !== 0 
-    ? parseFloat(((profit / purchasePrice) * 100).toFixed(2))
+  const profit = current_price - purchase_price;
+  const profit_rate = purchase_price !== 0 
+    ? parseFloat(((profit / purchase_price) * 100).toFixed(2))
     : 0;
   
   // 익절률, 손절률 가져오기
@@ -65,19 +46,20 @@ export async function action({ request }: Route.ActionArgs) {
     : 0;
 
   // 데이터베이스에 저장
-  await db.insert(assets).values({
+  await db.insert(stockHoldings).values({
     symbol,
     name,
-    purchasePrice,
-    purchaseDate,
-    currentPrice,
-    currentDate,
+    purchase_price,
+    purchase_date,
+    current_price,
+    current_date,
     profit_rate: profit_rate.toString(),
     take_profit_rate: take_profit_rate.toString(),
     stop_loss_rate: stop_loss_rate.toString(),
+    profile_id: profileId,
   });
 
-  return redirect("/assets");
+  return redirect("/stocks");
 }
 
 export function meta({}: Route.MetaArgs) {
@@ -87,7 +69,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function NewAssetPage() {
+export default function NewStockPage() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [name, setName] = useState("");
@@ -100,7 +82,7 @@ export default function NewAssetPage() {
     setName(inputName);
     
     // 종목명이 매핑에 있으면 자동으로 종목코드 채우기
-    const matchedCode = STOCK_CODE_MAP[inputName];
+    const matchedCode = getStockCodeByName(inputName);
     if (matchedCode) {
       setSymbol(matchedCode);
     }

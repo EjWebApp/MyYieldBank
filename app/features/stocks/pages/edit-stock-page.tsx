@@ -1,10 +1,15 @@
-import type { Route } from "./+types/edit-asset-page";
+import type { Route } from "./+types/edit-stock-page";
 import { Form, redirect, useLoaderData, useNavigation } from "react-router";
 import { eq } from "drizzle-orm";
 import { Button } from "~/common/components/ui/button";
 import { Hero } from "~/common/components/hero";
 import { db } from "~/db";
-import { assets } from "../schema";
+import { stockHoldings } from "../schema";
+import { useState } from "react";
+import { Calendar } from "~/common/components/ui/calendar";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const id = Number(params.id);
@@ -12,23 +17,23 @@ export async function loader({ params }: Route.LoaderArgs) {
     throw new Response("Invalid id", { status: 400 });
   }
 
-  const [asset] = await db
+  const [stock] = await db
     .select()
-    .from(assets)
-    .where(eq(assets.asset_id, id))
+    .from(stockHoldings)
+    .where(eq(stockHoldings.holding_id, id))
     .limit(1);
 
-  if (!asset) {
+  if (!stock) {
     throw new Response("Not found", { status: 404 });
   }
 
   return {
-    asset: {
-      id: asset.asset_id.toString(),
-      name: asset.name,
-      symbol: asset.symbol,
-      purchasePrice: asset.purchasePrice,
-      purchaseDate: asset.purchaseDate.toISOString().split("T")[0],
+    stock: {
+      id: stock.holding_id.toString(),
+      name: stock.name,
+      symbol: stock.symbol,
+      purchasePrice: stock.purchase_price,
+      purchaseDate: stock.purchase_date.toISOString().split("T")[0],
     },
   };
 }
@@ -50,22 +55,22 @@ export async function action({ request, params }: Route.ActionArgs) {
   if (!Number.isFinite(purchasePrice) || purchasePrice < 0) {
     throw new Response("Invalid purchasePrice", { status: 400 });
   }
-  const purchaseDate = new Date(purchaseDateStr);
-  if (Number.isNaN(purchaseDate.getTime())) {
+  const purchase_date = new Date(purchaseDateStr);
+  if (Number.isNaN(purchase_date.getTime())) {
     throw new Response("Invalid purchaseDate", { status: 400 });
   }
 
   await db
-    .update(assets)
+    .update(stockHoldings)
     .set({
       name,
-      purchasePrice: Math.trunc(purchasePrice),
-      purchaseDate,
-      updatedAt: new Date(),
+      purchase_price: Math.trunc(purchasePrice),
+      purchase_date,
+      updated_at: new Date(),
     })
-    .where(eq(assets.asset_id, id));
+    .where(eq(stockHoldings.holding_id, id));
 
-  return redirect("/assets");
+  return redirect("/stocks");
 }
 
 export function meta({}: Route.MetaArgs) {
@@ -75,10 +80,25 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function EditAssetPage() {
-  const { asset } = useLoaderData<typeof loader>();
+export default function EditStockPage() {
+  const { stock } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    stock.purchaseDate ? new Date(stock.purchaseDate) : new Date()
+  );
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (date <= today) {
+        setSelectedDate(date);
+        setIsCalendarOpen(false);
+      }
+    }
+  };
 
   return (
     <div className="space-y-20">
@@ -95,7 +115,7 @@ export default function EditAssetPage() {
               id="name"
               name="name"
               required
-              defaultValue={asset.name}
+              defaultValue={stock.name}
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
@@ -109,7 +129,7 @@ export default function EditAssetPage() {
               id="symbol"
               name="symbol"
               readOnly
-              value={asset.symbol}
+              value={stock.symbol}
               className="w-full px-3 py-2 border rounded-md bg-muted cursor-not-allowed"
             />
           </div>
@@ -125,7 +145,7 @@ export default function EditAssetPage() {
               required
               min="0"
               step="1"
-              defaultValue={asset.purchasePrice}
+              defaultValue={stock.purchasePrice}
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
@@ -135,13 +155,45 @@ export default function EditAssetPage() {
               구매 일자 <span className="text-red-500">*</span>
             </label>
             <input
-              type="date"
-              id="purchaseDate"
+              type="hidden"
               name="purchaseDate"
+              value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
               required
-              defaultValue={asset.purchaseDate}
-              className="w-full px-3 py-2 border rounded-md"
             />
+            <div className="relative">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="flex-1 px-3 py-2 border rounded-md bg-background min-h-[40px] flex items-center cursor-pointer"
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                >
+                  {selectedDate ? (
+                    format(selectedDate, "yyyy년 MM월 dd일", { locale: ko })
+                  ) : (
+                    <span className="text-muted-foreground">날짜를 선택하세요</span>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                  className="h-[40px] w-[40px]"
+                >
+                  <CalendarIcon className="h-4 w-4" />
+                </Button>
+              </div>
+              {isCalendarOpen && (
+                <div className="absolute z-10 mt-2 bg-background border rounded-md shadow-lg">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateSelect}
+                    disabled={(date) => date > new Date()}
+                    className="rounded-md"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-4 pt-4">
@@ -154,7 +206,7 @@ export default function EditAssetPage() {
               onClick={() => window.history.back()}
               className="flex-1"
             >
-              취소
+              닫기
             </Button>
           </div>
         </Form>
@@ -162,4 +214,3 @@ export default function EditAssetPage() {
     </div>
   );
 }
-
