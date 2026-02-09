@@ -4,6 +4,7 @@ import { Button } from "~/common/components/ui/button";
 interface StockCardProps {
   id: string;
   name: string;
+  timestamp: string | null;
   purchaseDate: string;
   purchasePrice: number;
   currentPrice: number;
@@ -20,6 +21,7 @@ interface StockCardProps {
 export function StockCard({
   id,
   name,
+  timestamp,
   purchaseDate,
   purchasePrice,
   currentPrice,
@@ -42,7 +44,12 @@ export function StockCard({
     <div className="border rounded-lg p-4 space-y-3">
       <div>
         <h3 className="font-semibold text-lg">{name}</h3>
-        <p className="text-sm text-muted-foreground">구매일: {purchaseDate}</p>
+        <div className="flex gap-4">
+          <p className="text-sm text-muted-foreground">구매일: {purchaseDate}</p>
+          {timestamp && (
+            <p className="text-sm text-muted-foreground">업데이트: {timestamp}</p>
+          )}
+        </div>
       </div>
       <div className="space-y-2">
         <div className="flex justify-between items-center">

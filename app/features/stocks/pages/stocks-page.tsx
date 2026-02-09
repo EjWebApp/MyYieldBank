@@ -3,11 +3,10 @@ import { Link, useLoaderData, useRevalidator } from "react-router";
 import type { Route } from "./+types/stocks-page";
 import { StockCard } from "../components/stock-card";
 import { Hero } from "~/common/components/hero";
-import { getAssetWithPrices } from "~/lib/stock-util";
-import { useEffect } from "react";
-import { isMarketOpen } from "~/lib/utils";
+//import { getAssetWithPrices } from "~/lib/stock-util";
 import { getStockHoldings } from "../queries";
-import { makeSSRClient } from "~/supa-client";
+import { isMarketOpen } from "~/lib/utils";
+import { useEffect } from "react";
 export async function loader({request}: Route.LoaderArgs) {
   const stocksWithPrices = await getStockHoldings(request);
   return { stocks: stocksWithPrices };
@@ -19,6 +18,54 @@ export const meta: Route.MetaFunction = () => {
     { name: "description", content: "보유한 종목을 관리합니다" },
   ];
 };
+
+
+export default function StocksPage() {
+  const { stocks } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
+    // 장중일 때만 30초마다 업데이트, 장 마감 후에는 5분마다 업데이트
+    useEffect(() => {
+      const updateInterval = isMarketOpen() ? 5000 : 300000; // 장중: 5초, 마감 후: 5분 
+      
+      console.log(`[HomePage] 장 상태: ${isMarketOpen() ? '개장' : '마감'}, 업데이트 주기: ${updateInterval / 1000}초`);
+      
+      const interval = setInterval(() => {
+        revalidator.revalidate();
+      }, updateInterval);
+  
+      return () => clearInterval(interval);
+    }, [revalidator]);
+  
+  return (
+    <div className="space-y-20">
+      <Hero title="종목" subtitle="보유한 종목을 관리합니다." />
+      <div className="flex justify-end">
+            <Button asChild>
+              <Link to="/stocks/new">종목 추가</Link>
+            </Button>
+        </div>
+      <div className="grid grid-cols-3 gap-4">
+        {stocks && stocks.length > 0 ? (
+          stocks.map((stock) => (
+            <StockCard
+              key={stock.id} 
+              {...stock}
+              showModifyButton={true}
+              showDeleteButton={true}
+              showHiddenToggle={true}
+            />
+          ))
+        ) : (
+          <div className="col-span-3 text-center text-muted-foreground py-8">
+            등록된 종목이 없습니다.
+          </div>
+        )}
+      </div>      
+    </div>
+  );
+}
+
+/*
 
 export default function StockPage() {
   // 페이크 주식 데이터
@@ -83,8 +130,7 @@ export default function StockPage() {
       stop_loss_rate: 5.0,
       take_profit_rate: 10.0,
     },
-  ];
-
+  ];*
   return (
     <div className="space-y-20">
       <Hero title="종목" subtitle="보유한 종목을 관리합니다." />
@@ -111,3 +157,4 @@ export default function StockPage() {
     </div>
   );
 }
+*/

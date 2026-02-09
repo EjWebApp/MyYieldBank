@@ -44,7 +44,7 @@ function isMarketOpen(): boolean {
   return currentTime >= marketOpen && currentTime <= marketClose;
 }
 
-export async function getStockPrice(code: string = "005930"): Promise<StockPrice> {
+export async function getStockPrice(code: string ): Promise<StockPrice> {
   const marketOpen = isMarketOpen();
   console.log(`[Stock API] 시작: 코드 ${code}, 장 상태: ${marketOpen ? '개장' : '마감'}`);
   
@@ -86,12 +86,11 @@ function parseKISResponse(code: string, output: any): StockPrice {
   // prdy_vrss_sign: 전일 대비 부호 (1: 상한, 2: 상승, 3: 보합, 4: 하한, 5: 하락)
   // prdy_ctrt: 전일 대비율
   // hts_kor_isnm: 한글 종목명
-  
   const currentPrice = parseInt(String(output.stck_prpr || '0').replace(/,/g, ''), 10);
   const previousClose = parseInt(String(output.prdy_clpr || '0').replace(/,/g, ''), 10);
   const change = parseInt(String(output.prdy_vrss || '0').replace(/,/g, ''), 10);
   const changePercent = parseFloat(String(output.prdy_ctrt || '0'));
-  const name = output.hts_kor_isnm || output.hts_kor_isnm || '';
+  const name = output.hts_kor_isnm;
   
   // 등락률이 없으면 계산
   const finalChangePercent = changePercent !== 0 
@@ -116,6 +115,7 @@ function parseKISResponse(code: string, output: any): StockPrice {
 }
 
 // 토큰 요청 제한 (하루에 1번만 요청)
+// ⚠️ 서버 사이드에서만 관리되는 모듈 레벨 변수
 interface TokenRequestCache {
   requestedDate: string; // YYYY-MM-DD 형식
   token: string;
@@ -125,16 +125,23 @@ interface TokenRequestCache {
 let tokenRequestCache: TokenRequestCache | null = null;
 
 /**
- * Access Token을 가져옵니다
+ * Access Token을 가져옵니다 (서버 사이드에서만 사용)
  * 한국투자증권 API는 하루에 1번만 발급하며, 같은 날 재요청 시 같은 토큰을 반환합니다.
- * 따라서 하루에 한 번만 API 서버에 요청하고, 그 토큰을 재사용합니다.
+ * 
+ * ⚠️ 중요: 이 함수는 서버 사이드에서만 실행되어야 합니다.
+ * 클라이언트에서는 loader를 통해 토큰을 받아야 합니다.
  */
-async function getAccessToken(
+export async function getAccessToken(
   baseUrl: string,
   appKey: string,
   appSecret: string,
   isProduction: boolean
 ): Promise<string> {
+  // 서버 사이드 체크: 클라이언트에서 호출되면 에러
+  if (typeof window !== 'undefined') {
+    throw new Error('getAccessToken은 서버 사이드에서만 실행되어야 합니다. 클라이언트에서는 호출할 수 없습니다.');
+  }
+  
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   
   // 오늘 이미 요청한 토큰이 있으면 재사용
@@ -202,8 +209,14 @@ async function getAccessToken(
 
 /**
  * 한국투자증권 OpenAPI에서 주식 정보를 가져옵니다
+ * ⚠️ 서버 사이드에서만 실행되어야 합니다
  */
 async function getStockPriceFromKIS(code: string): Promise<StockPrice> {
+  // 서버 사이드 체크: 클라이언트에서 호출되면 에러
+  if (typeof window !== 'undefined') {
+    throw new Error('getStockPriceFromKIS는 서버 사이드에서만 실행되어야 합니다. 클라이언트에서는 호출할 수 없습니다.');
+  }
+  
   // 환경변수에서 API 키 가져오기
   // Vite에서는 import.meta.env를 사용하지만, 서버 사이드에서는 process.env 사용
   const appKey = process.env.KIS_APP_KEY || import.meta.env?.KIS_APP_KEY || '';
@@ -256,7 +269,9 @@ async function getStockPriceFromKIS(code: string): Promise<StockPrice> {
     // 참고: https://github.com/koreainvestment/open-trading-api
     
     // 종목 코드 6자리 포맷팅
-    const formattedCode = code.padStart(6, '0');
+    // 맨 앞 알파벳 접두사 제거 (예: "A005930" -> "005930")
+    const codeWithoutPrefix = code.replace(/^[A-Za-z]+/, '');
+    const formattedCode = codeWithoutPrefix.padStart(6, '0');
     
     // 시장 구분 코드 판단
     // 종목 코드만으로는 정확한 시장 구분이 어려우므로 코스피(J)로 먼저 시도

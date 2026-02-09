@@ -1,5 +1,5 @@
 import type { Route } from "./+types/new-stock-page";
-import { Form, useNavigation, redirect } from "react-router";
+import { Form, useNavigation, redirect, useLoaderData } from "react-router";
 import { Button } from "~/common/components/ui/button";
 import { Hero } from "~/common/components/hero";
 import { db } from "~/db";
@@ -10,9 +10,18 @@ import { Calendar } from "~/common/components/ui/calendar";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { getStockCatalogSync, getStockCodeByName } from "~/lib/stock-catalog";
+import { getStockCatalogSync, getStockCodeByName, getStockCatalog } from "~/lib/stock-catalog";
 import { makeSSRClient } from "~/supa-client";
 import { getLoggedInUserId } from "~/features/users/queries";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  // 서버에서 카탈로그를 로드하여 클라이언트에 전달
+  console.log('[NewStockPage] loader: 카탈로그 로드 시작...');
+  const catalog = await getStockCatalog();
+  console.log('[NewStockPage] loader: 카탈로그 로드 완료, 크기:', Object.keys(catalog).length);
+  
+  return { catalog };
+}
 
 export async function action({ request }: Route.ActionArgs) {
   // 사용자 인증 확인
@@ -71,20 +80,33 @@ export function meta({}: Route.MetaArgs) {
 
 export default function NewStockPage() {
   const navigation = useNavigation();
+  const loaderData = useLoaderData<typeof loader>();
   const isSubmitting = navigation.state === "submitting";
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  // loader에서 받은 카탈로그를 사용
+  const catalog = loaderData.catalog;
+  console.log('[NewStockPage] 컴포넌트: 카탈로그 크기:', Object.keys(catalog).length);
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputName = e.target.value;
+    console.log('[NewStockPage] handleNameChange 호출됨:', inputName);
     setName(inputName);
+
+    // loader에서 받은 카탈로그에서 종목코드 찾기
+    const matchedCode = catalog[inputName];
+    console.log('[NewStockPage] 입력한 종목명:', inputName);
+    console.log('[NewStockPage] 매칭된 코드:', matchedCode);
     
-    // 종목명이 매핑에 있으면 자동으로 종목코드 채우기
-    const matchedCode = getStockCodeByName(inputName);
     if (matchedCode) {
       setSymbol(matchedCode);
+      console.log('[NewStockPage] 종목코드 설정 완료:', matchedCode);
+    } else {
+      setSymbol('');
+      console.log('[NewStockPage] 매칭되는 코드 없음');
     }
   };
 

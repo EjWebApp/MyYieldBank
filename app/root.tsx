@@ -15,6 +15,7 @@ import "./app.css";
 import Navigation from "./common/components/navigation";
 import { Settings } from "luxon";
 import { makeSSRClient } from "./supa-client";
+import { getAccessToken } from "./lib/stock-api";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -34,6 +35,27 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   const {
     data: { user },
   } = await client.auth.getUser();
+  
+  // 서버 시작 시 KIS 토큰을 한 번 가져옴 (하루 1회 제한)
+  // ⚠️ 중요: 이 코드는 서버 사이드에서만 실행되며, 모듈 레벨 캐시를 사용합니다
+  // 여러 loader에서 호출해도 같은 캐시를 공유하므로 실제로는 한 번만 실행됩니다
+  try {
+    const appKey = process.env.KIS_APP_KEY || '';
+    const appSecret = process.env.KIS_APP_SECRET || '';
+    const isProduction = process.env.KIS_PRODUCTION === 'true';
+    const baseUrl = isProduction 
+      ? 'https://openapi.koreainvestment.com:9443'
+      : 'https://openapivts.koreainvestment.com:29443';
+    
+    if (appKey && appSecret) {
+      // 토큰을 가져옴 (캐시되어 있으면 재사용, 없으면 새로 발급)
+      await getAccessToken(baseUrl, appKey, appSecret, isProduction);
+    }
+  } catch (error) {
+    // 토큰 발급 실패는 로그만 남기고 앱 실행은 계속
+    console.error('[Root Loader] KIS 토큰 초기화 실패 (무시됨):', error);
+  }
+  
   return { user };
 };
 export function Layout({ children }: { children: React.ReactNode }) {

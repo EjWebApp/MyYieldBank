@@ -1,5 +1,7 @@
 import { getStockPrice } from "~/lib/stock-api";
 import { makeSSRClient } from "~/supa-client";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 
 export const getStockHoldings = async (request: Request) => {
@@ -33,6 +35,7 @@ export const getStockHoldings = async (request: Request) => {
                     return {
                         ...stock,
                         current_price: priceInfo.currentPrice || stock.current_price || 0,
+                        timestamp: priceInfo.timestamp, // getStockPrice에서 받은 timestamp 사용
                     };
                 } catch (error) {
                     console.error(`[getStockHoldings] ${stock.symbol} 가격 조회 실패:`, error);
@@ -40,6 +43,7 @@ export const getStockHoldings = async (request: Request) => {
                     return {
                         ...stock,
                         current_price: stock.current_price || 0,
+                        timestamp: stock.current_date || null, // current_date가 없으면 null
                     };
                 }
             })
@@ -50,30 +54,24 @@ export const getStockHoldings = async (request: Request) => {
             const purchase_price = stock.purchase_price ?? 0;
             const current_price = stock.current_price ?? 0;
             const current_profit = current_price - purchase_price;
-            
+            // timestamp를 한국시간으로 보기 좋게 포맷팅 (없으면 null)
+            const timestamp = stock.timestamp 
+                ? format(new Date(stock.timestamp), "HH:mm:ss", { locale: ko })
+                : null;
             // purchase_price가 0이면 나누기 에러 방지
             const current_profit_rate = purchase_price > 0 
                 ? (current_profit / purchase_price) * 100 
                 : 0;
             
-            // 날짜 파싱 안전하게 처리
-            let purchaseDate: string;
-            try {
-                if (stock.purchase_date instanceof Date) {
-                    purchaseDate = stock.purchase_date.toISOString().split('T')[0];
-                } else if (stock.purchase_date) {
-                    purchaseDate = new Date(stock.purchase_date).toISOString().split('T')[0];
-                } else {
-                    purchaseDate = new Date().toISOString().split('T')[0];
-                }
-            } catch (error) {
-                console.error('[getStockHoldings] 날짜 파싱 에러:', error, stock.purchase_date);
-                purchaseDate = new Date().toISOString().split('T')[0];
-            }
+            // 날짜 파싱 (YYYY-MM-DD 형식)
+            const purchaseDate = stock.purchase_date 
+                ? new Date(stock.purchase_date).toISOString().split('T')[0]
+                : new Date().toISOString().split('T')[0];
             
             return {
                 id: stock.holding_id?.toString() || '',
                 name: stock.name || '',
+                timestamp,
                 purchaseDate,
                 purchasePrice: purchase_price,
                 currentPrice: current_price,

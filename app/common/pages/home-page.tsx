@@ -1,5 +1,7 @@
 import { useLoaderData, useFetcher } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { StockCard } from "../../features/stocks/components/stock-card";
 import type { Route } from "./+types/home-page";
 import { getStockHoldings } from "~/features/stocks/queries";
@@ -38,9 +40,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function HomePage() {
   const loaderData = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // fetcher 데이터가 있으면 사용, 없으면 loader 데이터 사용
   const stocks = (fetcher.data?.stocks ?? loaderData.stocks) || [];
+
+  // 현재 시간을 1초마다 업데이트
+  useEffect(() => {
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timeInterval);
+  }, []);
 
   // 3초마다 주식 데이터만 갱신 (인증 체크 없이)
   useEffect(() => {
@@ -61,9 +73,14 @@ export default function HomePage() {
     <div className="space-y-40">
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <h2 className="text-5xl font-bold leading-tight tracking-tight">
-            내 자산
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-5xl font-bold leading-tight tracking-tight">
+              내 자산
+            </h2>
+            <h3 className="text-4xl leading-tight tracking-tight">
+              {format(currentTime, "yyyy-MM-dd HH:mm:ss", { locale: ko })}
+            </h3>
+          </div>
           <p className="text-xl font-light text-foreground">
             보유한 자산의 현재 상태를 확인하세요.
           </p>

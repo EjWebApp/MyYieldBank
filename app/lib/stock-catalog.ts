@@ -149,5 +149,32 @@ export function getStockNameByCode(code: string): string | undefined {
   return Object.keys(catalog).find(key => catalog[key] === code);
 }
 
+// ⚠️ 중요: SSR 환경에서의 실행 위치
+// 
+// 1. 서버 사이드 (Node.js):
+//    - 이 모듈 레벨 코드는 서버에서만 실행됩니다
+//    - 서버가 시작될 때 한 번만 실행되어 서버 메모리에 STOCK_CODE_MAP 저장
+//    - loader 함수에서 사용할 때는 서버의 메모리를 참조
+//
+// 2. 클라이언트 사이드 (브라우저):
+//    - 브라우저에서는 별도의 모듈 인스턴스가 생성됩니다
+//    - 클라이언트의 STOCK_CODE_MAP은 비어있습니다 (서버와 별개)
+//    - 클라이언트에서 사용하려면 useEffect에서 getStockCatalog()를 호출해야 합니다
+//
+// 서버 시작 시 주식 카탈로그를 한 번 로드 (서버에서만 실행됨)
+let initialized = false;
+
+if (typeof window === 'undefined') {
+  // 서버 사이드에서만 실행 (window 객체가 없음)
+  if (!initialized) {
+    console.log('[Stock Catalog] 서버 시작 시 초기화 시작...');
+    initialized = true;
+    // 비동기 초기화를 백그라운드에서 실행 (서버 시작을 블로킹하지 않음)
+    refreshStockCatalog().catch((error) => {
+      console.error('[Stock Catalog] 서버 시작 시 초기화 실패:', error);
+    });
+  }
+}
+
 // TypeScript 모듈 인식을 위한 명시적 export
 export type { };
