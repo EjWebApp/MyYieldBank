@@ -2,12 +2,14 @@ import { getStockPrice } from "~/lib/stock-api";
 import { makeSSRClient } from "~/supa-client";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { getLoggedInUserId } from "~/features/users/queries";
 
 
 export const getStockHoldings = async (request: Request) => {
     try {
         const { client } = makeSSRClient(request);
-        const { data, error } = await client.from("stock_holdings").select("*");
+        const profileId = await getLoggedInUserId(client);
+        const { data, error } = await client.from("stock_holdings").select("*").eq("profile_id", profileId);
         
         if (error) {
             console.error('[getStockHoldings] 데이터베이스 조회 에러:', error);
@@ -78,6 +80,7 @@ export const getStockHoldings = async (request: Request) => {
                 currentProfit: current_profit,
                 currentProfitRate: Number(current_profit_rate.toFixed(2)),
                 hidden: stock.hidden ?? false,
+                notification_enabled: stock.notification_enabled ?? (stock as any).enabled ?? true,
                 good: 0,
                 bad: 0,
                 stop_loss_rate: stock.stop_loss_rate != null ? parseFloat(stock.stop_loss_rate.toString()) : 0,

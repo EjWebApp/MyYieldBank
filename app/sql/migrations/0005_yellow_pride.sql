@@ -1,0 +1,1 @@
+ALTER TABLE "stock_holdings" RENAME COLUMN "enabled" TO "notification_enabled";

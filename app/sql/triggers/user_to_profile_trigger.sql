@@ -8,21 +8,22 @@ begin
     -- raw_user_meta_data는 signUp의 options.data에 저장됨
     if new.raw_user_meta_data is not null then
         if new.raw_user_meta_data ? 'name' and new.raw_user_meta_data ? 'username' then
-            insert into public.profiles (profile_id, name, username)
-            values (new.id, new.raw_user_meta_data ->> 'name', new.raw_user_meta_data ->> 'username');
+            insert into public.profiles (profile_id, name, username, email)
+            values (new.id, new.raw_user_meta_data ->> 'name', new.raw_user_meta_data ->> 'username', new.email);
         else
             -- name이나 username이 없으면 기본값 사용
-            insert into public.profiles (profile_id, name, username)
+            insert into public.profiles (profile_id, name, username, email)
             values (
                 new.id, 
                 COALESCE(new.raw_user_meta_data ->> 'name', 'Anonymous'),
-                COALESCE(new.raw_user_meta_data ->> 'username', 'user_' || substr(md5(random()::text), 1, 8))
+                COALESCE(new.raw_user_meta_data ->> 'username', 'user_' || substr(md5(random()::text), 1, 8)),
+                new.email
             );
         end if;
     else
         -- raw_user_meta_data가 없으면 기본값으로 프로필 생성
-        insert into public.profiles (profile_id, name, username)
-        values (new.id, 'Anonymous', 'user_' || substr(md5(random()::text), 1, 8));
+        insert into public.profiles (profile_id, name, username, email)
+        values (new.id, 'Anonymous', 'user_' || substr(md5(random()::text), 1, 8), new.email);
     end if;
     return new;
 end;

@@ -4,6 +4,7 @@ import {
     text,
     timestamp,
     uuid,
+    boolean
   } from "drizzle-orm/pg-core";
   
   const users = pgSchema("auth").table("users", {
@@ -17,9 +18,11 @@ import {
     avatar: text(),
     name: text().notNull(),
     username: text().notNull(),
+    email: text(), // auth.users에서 이메일 저장
     headline: text(),
     bio: text(),
     created_at: timestamp().notNull().defaultNow(),
     updated_at: timestamp().notNull().defaultNow(),
+
   });
   

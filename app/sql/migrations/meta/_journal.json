@@ -29,6 +29,20 @@
       "when": 1770101535865,
       "tag": "0003_special_thundra",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770884737713,
+      "tag": "0004_dry_dark_phoenix",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770950528611,
+      "tag": "0005_yellow_pride",
+      "breakpoints": true
     }
   ]
 }

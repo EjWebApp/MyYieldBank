@@ -2,13 +2,16 @@ import { type RouteConfig, index, route, prefix, layout } from "@react-router/de
 
 export default [
     index("common/pages/index-page.tsx"),
+    route("api/cron/stock-notifications", "api/cron/stock-notifications.tsx"),
     route("home", "common/pages/home-page.tsx"),
     route("stocks", "features/stocks/pages/stocks-page.tsx"),
     route("stocks/new", "features/stocks/pages/new-stock-page.tsx"),
     route("stocks/:id/edit", "features/stocks/pages/edit-stock-page.tsx"),
     route("stocks/:id/delete", "features/stocks/pages/delete-stock.tsx"),
-
+    route("/welcome", "features/users/pages/welcome-page.tsx"),
+    
     route("stocks/:id/toggle-hidden", "features/stocks/pages/toggle-hidden-stock.tsx"),
+    route("stocks/:id/toggle-notification", "features/stocks/pages/toggle-notification-stock.tsx"),
     ...prefix("/ideas", [
         index("features/ideas/pages/ideas-page.tsx"),
         route("/:ideaId", "features/ideas/pages/idea-page.tsx"),

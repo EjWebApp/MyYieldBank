@@ -13,6 +13,7 @@ export const getUserProfile = async (
         profile_id,
         name,
         username,
+        email,
         avatar,
         headline,
         bio

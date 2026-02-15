@@ -11,7 +11,9 @@ interface StockCardProps {
   currentProfit: number;
   currentProfitRate: number;
   hidden: boolean;
+  notification_enabled?: boolean;
   showHiddenToggle?: boolean;
+  showNotificationToggle?: boolean;
   showModifyButton?: boolean;
   showDeleteButton?: boolean;
   stop_loss_rate:number;
@@ -28,9 +30,11 @@ export function StockCard({
   currentProfit,
   currentProfitRate,
   hidden,
+  notification_enabled = true,
   showModifyButton = false,
   showDeleteButton = false,
   showHiddenToggle = false,
+  showNotificationToggle = false,
   stop_loss_rate,
   take_profit_rate,
 }: StockCardProps) {
@@ -39,6 +43,7 @@ export function StockCard({
   const profitRateColor = profitRateValue >= 0 ? "text-green-600" : "text-red-600";
   const deleteFetcher = useFetcher();
   const toggleHiddenFetcher = useFetcher();
+  const toggleNotificationFetcher = useFetcher();
 
   return (
     <div className="border rounded-lg p-4 space-y-3">
@@ -104,6 +109,21 @@ export function StockCard({
             </Button>
           </toggleHiddenFetcher.Form>
         ) : null}
+
+        {showNotificationToggle ? (
+          <toggleNotificationFetcher.Form method="post" action={`/stocks/${id}/toggle-notification`}>
+            <Button
+              type="submit"
+              size="sm"
+              variant={notification_enabled ? "outline" : "secondary"}
+              disabled={toggleNotificationFetcher.state !== "idle"}
+              title={notification_enabled ? "익절/손절 알림 켜짐 - 끄려면 클릭" : "익절/손절 알림 꺼짐 - 켜려면 클릭"}
+            >
+              {notification_enabled ? "🔔 알림 ON" : "🔕 알림 OFF"}
+            </Button>
+          </toggleNotificationFetcher.Form>
+        ) : null}
+        
         {showDeleteButton ? (
         <deleteFetcher.Form method="post" action={`/stocks/${id}/delete`} className="ml-auto">
           <Button

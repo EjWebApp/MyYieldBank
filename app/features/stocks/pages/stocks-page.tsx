@@ -53,6 +53,7 @@ export default function StocksPage() {
               showModifyButton={true}
               showDeleteButton={true}
               showHiddenToggle={true}
+              showNotificationToggle={true}
             />
           ))
         ) : (

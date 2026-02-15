@@ -148,3 +148,50 @@ stock-catalog.ts의 모듈 레벨 코드:
 클라이언트: 컴포넌트 함수, 훅, 이벤트 핸들러
 모듈 변수: 서버와 클라이언트가 각각 별도 인스턴스를 가짐
 이해가 되셨나요? 추가 질문이 있으면 알려주세요.
+
+# 2026-02-10
+[ ] localhost를 임시로 외부에 노출 시키는 프로그램 : 
+   WebHook
+   https://github.com/cloudflare/cloudflared
+   vite.config.ts 파일에 server 설정함
+# 2026-02-11
+현재 상태
+   클라이언트 사이드 브라우저 알림: 구현됨 (home-page.tsx)
+   서버 사이드 알림 시스템: 미구현 (이전에 의견만 제시)
+   Cloudflare Tunnel 설정: 완료
+   
+오늘 할 수 있는 작업 제안
+1. 서버 사이드 알림 시스템 구현 (우선순위 높음)
+   백그라운드 워커로 주기적 체크
+   [V]모든 사용자의 주식 보유량 확인
+   익절/손절 조건 도달 시 알림 발송 : 02-12
+   이메일/카카오톡 연동 준비 : 02-12
+2. 알림 발송 이력 관리 (DB 스키마)
+   notifications 테이블 생성
+   중복 알림 방지 로직
+   알림 발송 기록 저장
+3. 수익률 대시보드 구현 (기획서 6번)
+   일/주/월 수익률 표시
+   누적 수익률 시각화
+   예금 이자 스타일 UI
+4. 은행 리포트 기능 (기획서 7번)
+   자주 손절된 종목 TOP
+   익절 성공률 통계
+   평균 보유 시간 분석
+   추천 순서
+   서버 사이드 알림 시스템 구현
+   알림 발송 이력 DB 스키마 추가
+   이메일/카카오톡 발송 로직 연동
+   어떤 작업부터 진행할까요?
+
+    npx create-email@latest  
+    https://react.email/
+    npm install react-email
+    npm install @react-email/components
+
+# 2026-02-13
+[] 토스결제
+   npm install @tosspayments/tosspayments-sdk
+
+# 2026-02-15
+npm i @vercel/react-router ->vercel.com

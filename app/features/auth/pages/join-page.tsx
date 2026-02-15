@@ -7,6 +7,7 @@ import { makeSSRClient } from "~/supa-client";
 import { z } from "zod";
 import { checkUsernameExists } from "~/features/auth/queries";
 import { LoaderCircle } from "lucide-react";
+import { sendWelcomeEmail } from "~/features/users/pages/welcome-page";
 
 export const meta: Route.MetaFunction = () => {
   return [{ title: "Join | wemake" }];
@@ -53,6 +54,16 @@ export const action = async ({ request }: Route.ActionArgs) => {
       signUpError: signUpError.message,
     };
   }
+  
+  // 회원가입 성공 시 웰컴 이메일 발송 (비동기, 에러가 나도 회원가입은 성공 처리)
+  try {
+    await sendWelcomeEmail(request, data.email, data.name);
+    console.log(`[JoinPage] 웰컴 이메일 발송 완료: ${data.email}`);
+  } catch (emailError) {
+    // 이메일 발송 실패해도 회원가입은 성공 처리
+    console.error("[JoinPage] 웰컴 이메일 발송 실패:", emailError);
+  }
+  
   return redirect("/", { headers });
 };
 

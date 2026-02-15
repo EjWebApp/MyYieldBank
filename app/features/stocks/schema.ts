@@ -24,8 +24,8 @@ export const stockHoldings = pgTable("stock_holdings", {
     take_profit_rate: numeric("take_profit_rate", { precision: 10, scale: 2 }).notNull().default("0"),
     // 손절률 (소수점 두째 자리)
     stop_loss_rate: numeric("stop_loss_rate", { precision: 10, scale: 2 }).notNull().default("0"),
-    // 활성화
-    enabled: boolean().notNull().default(true),
+    // 알림 활성화 : 익절/손절 알림을 보낼 것인지 여부
+    notification_enabled: boolean("notification_enabled").notNull().default(true),
     // 감추기
     hidden: boolean().notNull().default(false),
     // 등록일
@@ -37,4 +37,24 @@ export const stockHoldings = pgTable("stock_holdings", {
             onDelete: "cascade",
         }).notNull()
     
+});
+
+// 주식 알림 발송 기록 테이블 (1시간에 한 번만 발송하기 위한 기록)
+export const stockNotifications = pgTable("stock_notifications", {
+    // 알림 ID (기본키)
+    notification_id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    // 보유 종목 ID (외래키)
+    holding_id: integer().references(() => stockHoldings.holding_id, {
+        onDelete: "cascade",
+    }).notNull(),
+    // 프로필 ID (외래키)
+    profile_id: uuid().references(() => profiles.profile_id, {
+        onDelete: "cascade",
+    }).notNull(),
+    // 알림 타입 ('take_profit' | 'stop_loss')
+    notification_type: text().notNull(),
+    // 발송 시간
+    sent_at: timestamp().notNull().defaultNow(),
+    // 생성일
+    created_at: timestamp().notNull().defaultNow(),
 });
