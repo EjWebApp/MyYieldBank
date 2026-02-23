@@ -194,4 +194,10 @@ stock-catalog.ts의 모듈 레벨 코드:
    npm install @tosspayments/tosspayments-sdk
 
 # 2026-02-15
+[] vercel에 배포
 npm i @vercel/react-router ->vercel.com
+
+# 2026-02-20
+[] vercel(https://my-yield-bank-2qeg5w4xg-maeunjas-projects.vercel.app/auth/login)-www.moneylab.blog 연동오류
+[] 구글등으로 로그인 하기
+[] UI 모방일 최적화화
