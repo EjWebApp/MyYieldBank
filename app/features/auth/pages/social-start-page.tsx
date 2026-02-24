@@ -1,25 +1,33 @@
+import { z } from "zod";
+import type{ Route } from "./+types/social-start-page";
 import { redirect } from "react-router";
-import type { Route } from "./+types/social-start-page";
+import { makeSSRClient } from "~/supa-client";
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const provider = params.provider;
+const paramsSchema = z.object({
+  provider: z.enum(["github", "kakao"]),
+});
 
-  // TODO: 실제 소셜 로그인 시작 로직 구현
-  console.log("Social login start:", { provider });
-
-  // 임시로 소셜 로그인 완료 페이지로 리다이렉트
-  return redirect(`/auth/social/${provider}/complete`);
-}
-
-export default function SocialStartPage() {
-  return (
-    <div className="space-y-6 text-center">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">소셜 로그인</h1>
-        <p className="text-muted-foreground">
-          로그인 중...
-        </p>
-      </div>
-    </div>
-  );
-}
+export const loader = async ({ params, request }: Route.LoaderArgs) => {
+  const { success, data } = paramsSchema.safeParse(params);
+  if (!success) {
+    return redirect("/auth/login");
+  }
+  const { provider } = data;
+  const redirectTo = `http://localhost:5174/auth/social/${provider}/complete`;
+  const { client, headers } = makeSSRClient(request);
+  const {
+    data: { url },
+    error,
+  } = await client.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo,
+    },
+  });
+  if (url) {
+    return redirect(url, { headers });
+  }
+  if (error) {
+    throw error;
+  }
+};
