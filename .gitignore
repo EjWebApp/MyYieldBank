@@ -1,6 +1,10 @@
 .DS_Store
 .env
 /node_modules/
+**/node_modules/
+
+# 별도 스타터(대용량 바이너리 포함) 제외
+react-email-starter/
 
 # React Router
 /.react-router/
