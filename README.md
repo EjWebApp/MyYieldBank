@@ -201,3 +201,42 @@ npm i @vercel/react-router ->vercel.com
 [] vercel(https://my-yield-bank-2qeg5w4xg-maeunjas-projects.vercel.app/auth/login)-www.moneylab.blog 연동오류
 [] 구글등으로 로그인 하기
 [] UI 모방일 최적화화
+
+#2026-03-03
+   [] 네임칩에 새로 가입(https://ap.www.namecheap.com/)n01077074921@gmail.com/n01077074921
+      기존 ttochi0115@gmail.com 은 비밀번호 리셋 메일이 오지 않음!!
+
+   ※ Namecheap = 도메인 소유  /  Cloudflare = DNS 연결  /  Vercel = 실제 서버
+
+   [Cloudflare DNS 설정]
+
+   1) 루트 도메인 (@)
+
+   Type: A
+   Name: @
+   IP: 216.198.79.1(vercel 에서 제공함&기존거에서 수정하거나 삭제하고 할것)
+   Proxy: Proxied
+
+
+   2) www
+
+   Type: CNAME
+   Name: www
+   Target: cname.vercel-dns.com(Vercel 도메인 등록할 때 알려줌?)
+   Proxy: Proxied
+
+
+
+   [Vercel 설정]
+
+   Project → Settings → Domains 에 추가:
+
+   moneylab.ink
+   www.moneylab.ink
+
+
+
+   [주의사항]
+
+   - www → parkingpage.namecheap.com 삭제
+   - DNS는 Cloudflare에서만 수정(namecheap에서 제공공)

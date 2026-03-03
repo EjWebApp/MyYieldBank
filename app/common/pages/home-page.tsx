@@ -1,4 +1,4 @@
-import { useLoaderData, useFetcher } from "react-router";
+import { useLoaderData, useFetcher, Link } from "react-router";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -7,6 +7,7 @@ import type { Route } from "./+types/home-page";
 import { getStockHoldings } from "~/features/stocks/queries";
 import { getLoggedInUserId } from "~/features/users/queries";
 import { makeSSRClient } from "~/supa-client";
+import { Button } from "~/common/components/ui/button";
 export async function loader({ request }: Route.LoaderArgs) {
   console.log('[HomePage] loader 시작');
   const url = new URL(request.url);
@@ -44,6 +45,8 @@ export default function HomePage() {
 
   // fetcher 데이터가 있으면 사용, 없으면 loader 데이터 사용
   const stocks = (fetcher.data?.stocks ?? loaderData.stocks) || [];
+  const visibleStocks = stocks.filter((s: { hidden?: boolean }) => !s.hidden);
+  const hasNoStocks = visibleStocks.length === 0;
 
   // 현재 시간을 1초마다 업데이트
   useEffect(() => {
@@ -87,11 +90,29 @@ export default function HomePage() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {stocks
-          .filter((stock: any) => !stock.hidden)
-          .map((stock: any) => (
+        {hasNoStocks ? (
+          <div className="col-span-full flex flex-col items-center justify-center text-center py-16 px-4 space-y-6">
+            <p className="text-2xl font-medium text-foreground leading-relaxed">
+              나와 가족만 걱정해주는 나의 자산 이제 AI가 함께 걱정해줍니다.
+            </p>
+            <p className="text-xl text-muted-foreground">
+              지금 관심있는 자산을 등록해 보세요!
+            </p>
+            <p className="text-base text-muted-foreground/80 italic">
+              AI now takes care of your assets, even if you only worry about yourself and your family.
+            </p>
+            <p className="text-sm text-muted-foreground/80 italic">
+              Register the assets you&apos;re interested in now!
+            </p>
+            <Button asChild size="lg" className="mt-4">
+              <Link to="/stocks/new">자산 등록하기</Link>
+            </Button>
+          </div>
+        ) : (
+          visibleStocks.map((stock: any) => (
             <StockCard key={stock.id} {...stock} />
-          ))}
+          ))
+        )}
       </div>
     </div>
   );
