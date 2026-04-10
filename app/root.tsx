@@ -1,4 +1,5 @@
 import {
+  data,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -14,7 +15,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./common/components/navigation";
 import { Settings } from "luxon";
-import { makeSSRClient } from "./supa-client";
+import { isInvalidRefreshSessionError, makeSSRClient } from "./supa-client";
 import { getAccessToken } from "./lib/stock-api";
 
 export const links: Route.LinksFunction = () => [
@@ -31,11 +32,15 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
-  const { client } = makeSSRClient(request);
-  const {
-    data: { user },
-  } = await client.auth.getUser();
-  
+  const { client, headers } = makeSSRClient(request);
+  const { data: authData, error: authError } = await client.auth.getUser();
+
+  let user = authData?.user ?? null;
+  if (authError && isInvalidRefreshSessionError(authError)) {
+    await client.auth.signOut();
+    user = null;
+  }
+
   // 서버 시작 시 KIS 토큰을 한 번 가져옴 (하루 1회 제한)
   // ⚠️ 중요: 이 코드는 서버 사이드에서만 실행되며, 모듈 레벨 캐시를 사용합니다
   // 여러 loader에서 호출해도 같은 캐시를 공유하므로 실제로는 한 번만 실행됩니다
@@ -56,7 +61,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     console.error('[Root Loader] KIS 토큰 초기화 실패 (무시됨):', error);
   }
   
-  return { user };
+  return data({ user }, { headers });
 };
 export function Layout({ children }: { children: React.ReactNode }) {
   Settings.defaultLocale = "ko-KR";
@@ -91,6 +96,16 @@ export default function App({loaderData}: Route.ComponentProps) {
           ( <Navigation isLoggedIn={isLoggedIn} hasNotification={false} hasMessage={false} />)
       }
       <Outlet />
+      {pathname.includes("/auth/") ? null : (
+        <footer className="mt-24 border-t pt-8 text-sm text-muted-foreground">
+          <div className="flex flex-col gap-1">
+            <div>사업자정보</div>
+            <div>상호: MyYieldBank</div>
+            <div>대표자명: 홍길동</div>
+            <div>사업자등록번호: 000-00-00000</div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

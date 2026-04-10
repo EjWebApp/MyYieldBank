@@ -1,0 +1,662 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "common/pages/index-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "common/pages/health-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "api/cron/stock-notifications": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "common/pages/home-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/stocks-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/new-stock-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/edit-stock-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/delete-stock": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/welcome-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/toggle-hidden-stock": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/stocks/pages/toggle-notification-stock": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/ideas/pages/ideas-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/ideas/pages/idea-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/login-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/join-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/logout-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/opt-start-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/opt-complete-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/social-start-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/auth/pages/social-complete-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/dashboard-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/dashboard-ideas-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/messages-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/message-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/my-profile-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/settings-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/users/pages/notifications-page": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "common/pages/index-page": {
+        "id": "common/pages/index-page",
+        "parentId": "root",
+        "file": "app/common/pages/index-page.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "common/pages/health-page": {
+        "id": "common/pages/health-page",
+        "parentId": "root",
+        "file": "app/common/pages/health-page.tsx",
+        "path": "/health",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "api/cron/stock-notifications": {
+        "id": "api/cron/stock-notifications",
+        "parentId": "root",
+        "file": "app/api/cron/stock-notifications.tsx",
+        "path": "api/cron/stock-notifications",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "common/pages/home-page": {
+        "id": "common/pages/home-page",
+        "parentId": "root",
+        "file": "app/common/pages/home-page.tsx",
+        "path": "home",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/stocks-page": {
+        "id": "features/stocks/pages/stocks-page",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/stocks-page.tsx",
+        "path": "stocks",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/new-stock-page": {
+        "id": "features/stocks/pages/new-stock-page",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/new-stock-page.tsx",
+        "path": "stocks/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/edit-stock-page": {
+        "id": "features/stocks/pages/edit-stock-page",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/edit-stock-page.tsx",
+        "path": "stocks/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/delete-stock": {
+        "id": "features/stocks/pages/delete-stock",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/delete-stock.tsx",
+        "path": "stocks/:id/delete",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/welcome-page": {
+        "id": "features/users/pages/welcome-page",
+        "parentId": "root",
+        "file": "app/features/users/pages/welcome-page.tsx",
+        "path": "/welcome",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/toggle-hidden-stock": {
+        "id": "features/stocks/pages/toggle-hidden-stock",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/toggle-hidden-stock.tsx",
+        "path": "stocks/:id/toggle-hidden",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/stocks/pages/toggle-notification-stock": {
+        "id": "features/stocks/pages/toggle-notification-stock",
+        "parentId": "root",
+        "file": "app/features/stocks/pages/toggle-notification-stock.tsx",
+        "path": "stocks/:id/toggle-notification",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/ideas/pages/ideas-page": {
+        "id": "features/ideas/pages/ideas-page",
+        "parentId": "root",
+        "file": "app/features/ideas/pages/ideas-page.tsx",
+        "path": "/ideas",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/ideas/pages/idea-page": {
+        "id": "features/ideas/pages/idea-page",
+        "parentId": "root",
+        "file": "app/features/ideas/pages/idea-page.tsx",
+        "path": "/ideas/:ideaId",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/layouts/auth-layout": {
+        "id": "features/auth/layouts/auth-layout",
+        "parentId": "root",
+        "file": "app/features/auth/layouts/auth-layout.tsx",
+        "config": {}
+      },
+      "features/auth/pages/login-page": {
+        "id": "features/auth/pages/login-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/login-page.tsx",
+        "path": "/auth/login",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/join-page": {
+        "id": "features/auth/pages/join-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/join-page.tsx",
+        "path": "/auth/join",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/logout-page": {
+        "id": "features/auth/pages/logout-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/logout-page.tsx",
+        "path": "/auth/logout",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/opt-start-page": {
+        "id": "features/auth/pages/opt-start-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/opt-start-page.tsx",
+        "path": "/auth/opt/start",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/opt-complete-page": {
+        "id": "features/auth/pages/opt-complete-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/opt-complete-page.tsx",
+        "path": "/auth/opt/complete",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/social-start-page": {
+        "id": "features/auth/pages/social-start-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/social-start-page.tsx",
+        "path": "/auth/social/:provider/start",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/auth/pages/social-complete-page": {
+        "id": "features/auth/pages/social-complete-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "app/features/auth/pages/social-complete-page.tsx",
+        "path": "/auth/social/:provider/complete",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/layouts/dashboard-layout": {
+        "id": "features/users/layouts/dashboard-layout",
+        "parentId": "root",
+        "file": "app/features/users/layouts/dashboard-layout.tsx",
+        "config": {}
+      },
+      "features/users/pages/dashboard-page": {
+        "id": "features/users/pages/dashboard-page",
+        "parentId": "features/users/layouts/dashboard-layout",
+        "file": "app/features/users/pages/dashboard-page.tsx",
+        "path": "/my/dashboard",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/dashboard-ideas-page": {
+        "id": "features/users/pages/dashboard-ideas-page",
+        "parentId": "features/users/layouts/dashboard-layout",
+        "file": "app/features/users/pages/dashboard-ideas-page.tsx",
+        "path": "/my/dashboard/ideas",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/layouts/messages-layout": {
+        "id": "features/users/layouts/messages-layout",
+        "parentId": "root",
+        "file": "app/features/users/layouts/messages-layout.tsx",
+        "config": {}
+      },
+      "features/users/pages/messages-page": {
+        "id": "features/users/pages/messages-page",
+        "parentId": "features/users/layouts/messages-layout",
+        "file": "app/features/users/pages/messages-page.tsx",
+        "path": "/my/messages",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/message-page": {
+        "id": "features/users/pages/message-page",
+        "parentId": "features/users/layouts/messages-layout",
+        "file": "app/features/users/pages/message-page.tsx",
+        "path": "/my/messages/:messageId",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/my-profile-page": {
+        "id": "features/users/pages/my-profile-page",
+        "parentId": "root",
+        "file": "app/features/users/pages/my-profile-page.tsx",
+        "path": "/my/profile",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/settings-page": {
+        "id": "features/users/pages/settings-page",
+        "parentId": "root",
+        "file": "app/features/users/pages/settings-page.tsx",
+        "path": "/my/settings",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/users/pages/notifications-page": {
+        "id": "features/users/pages/notifications-page",
+        "parentId": "root",
+        "file": "app/features/users/pages/notifications-page.tsx",
+        "path": "/my/notifications",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "D:/dev/EjWebApp/MyYieldBank/app",
+    "basename": "/",
+    "buildDirectory": "D:/dev/EjWebApp/MyYieldBank/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "unstable_subResourceIntegrity": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "common/pages/index-page": {
+        "id": "common/pages/index-page",
+        "parentId": "root",
+        "file": "common/pages/index-page.tsx",
+        "index": true
+      },
+      "common/pages/health-page": {
+        "id": "common/pages/health-page",
+        "parentId": "root",
+        "file": "common/pages/health-page.tsx",
+        "path": "/health"
+      },
+      "api/cron/stock-notifications": {
+        "id": "api/cron/stock-notifications",
+        "parentId": "root",
+        "file": "api/cron/stock-notifications.tsx",
+        "path": "api/cron/stock-notifications"
+      },
+      "common/pages/home-page": {
+        "id": "common/pages/home-page",
+        "parentId": "root",
+        "file": "common/pages/home-page.tsx",
+        "path": "home"
+      },
+      "features/stocks/pages/stocks-page": {
+        "id": "features/stocks/pages/stocks-page",
+        "parentId": "root",
+        "file": "features/stocks/pages/stocks-page.tsx",
+        "path": "stocks"
+      },
+      "features/stocks/pages/new-stock-page": {
+        "id": "features/stocks/pages/new-stock-page",
+        "parentId": "root",
+        "file": "features/stocks/pages/new-stock-page.tsx",
+        "path": "stocks/new"
+      },
+      "features/stocks/pages/edit-stock-page": {
+        "id": "features/stocks/pages/edit-stock-page",
+        "parentId": "root",
+        "file": "features/stocks/pages/edit-stock-page.tsx",
+        "path": "stocks/:id/edit"
+      },
+      "features/stocks/pages/delete-stock": {
+        "id": "features/stocks/pages/delete-stock",
+        "parentId": "root",
+        "file": "features/stocks/pages/delete-stock.tsx",
+        "path": "stocks/:id/delete"
+      },
+      "features/users/pages/welcome-page": {
+        "id": "features/users/pages/welcome-page",
+        "parentId": "root",
+        "file": "features/users/pages/welcome-page.tsx",
+        "path": "/welcome"
+      },
+      "features/stocks/pages/toggle-hidden-stock": {
+        "id": "features/stocks/pages/toggle-hidden-stock",
+        "parentId": "root",
+        "file": "features/stocks/pages/toggle-hidden-stock.tsx",
+        "path": "stocks/:id/toggle-hidden"
+      },
+      "features/stocks/pages/toggle-notification-stock": {
+        "id": "features/stocks/pages/toggle-notification-stock",
+        "parentId": "root",
+        "file": "features/stocks/pages/toggle-notification-stock.tsx",
+        "path": "stocks/:id/toggle-notification"
+      },
+      "features/ideas/pages/ideas-page": {
+        "id": "features/ideas/pages/ideas-page",
+        "parentId": "root",
+        "file": "features/ideas/pages/ideas-page.tsx",
+        "path": "/ideas",
+        "index": true
+      },
+      "features/ideas/pages/idea-page": {
+        "id": "features/ideas/pages/idea-page",
+        "parentId": "root",
+        "file": "features/ideas/pages/idea-page.tsx",
+        "path": "/ideas/:ideaId"
+      },
+      "features/auth/layouts/auth-layout": {
+        "id": "features/auth/layouts/auth-layout",
+        "parentId": "root",
+        "file": "features/auth/layouts/auth-layout.tsx"
+      },
+      "features/auth/pages/login-page": {
+        "id": "features/auth/pages/login-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/login-page.tsx",
+        "path": "/auth/login"
+      },
+      "features/auth/pages/join-page": {
+        "id": "features/auth/pages/join-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/join-page.tsx",
+        "path": "/auth/join"
+      },
+      "features/auth/pages/logout-page": {
+        "id": "features/auth/pages/logout-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/logout-page.tsx",
+        "path": "/auth/logout"
+      },
+      "features/auth/pages/opt-start-page": {
+        "id": "features/auth/pages/opt-start-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/opt-start-page.tsx",
+        "path": "/auth/opt/start"
+      },
+      "features/auth/pages/opt-complete-page": {
+        "id": "features/auth/pages/opt-complete-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/opt-complete-page.tsx",
+        "path": "/auth/opt/complete"
+      },
+      "features/auth/pages/social-start-page": {
+        "id": "features/auth/pages/social-start-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/social-start-page.tsx",
+        "path": "/auth/social/:provider/start"
+      },
+      "features/auth/pages/social-complete-page": {
+        "id": "features/auth/pages/social-complete-page",
+        "parentId": "features/auth/layouts/auth-layout",
+        "file": "features/auth/pages/social-complete-page.tsx",
+        "path": "/auth/social/:provider/complete"
+      },
+      "features/users/layouts/dashboard-layout": {
+        "id": "features/users/layouts/dashboard-layout",
+        "parentId": "root",
+        "file": "features/users/layouts/dashboard-layout.tsx"
+      },
+      "features/users/pages/dashboard-page": {
+        "id": "features/users/pages/dashboard-page",
+        "parentId": "features/users/layouts/dashboard-layout",
+        "file": "features/users/pages/dashboard-page.tsx",
+        "path": "/my/dashboard",
+        "index": true
+      },
+      "features/users/pages/dashboard-ideas-page": {
+        "id": "features/users/pages/dashboard-ideas-page",
+        "parentId": "features/users/layouts/dashboard-layout",
+        "file": "features/users/pages/dashboard-ideas-page.tsx",
+        "path": "/my/dashboard/ideas"
+      },
+      "features/users/layouts/messages-layout": {
+        "id": "features/users/layouts/messages-layout",
+        "parentId": "root",
+        "file": "features/users/layouts/messages-layout.tsx"
+      },
+      "features/users/pages/messages-page": {
+        "id": "features/users/pages/messages-page",
+        "parentId": "features/users/layouts/messages-layout",
+        "file": "features/users/pages/messages-page.tsx",
+        "path": "/my/messages",
+        "index": true
+      },
+      "features/users/pages/message-page": {
+        "id": "features/users/pages/message-page",
+        "parentId": "features/users/layouts/messages-layout",
+        "file": "features/users/pages/message-page.tsx",
+        "path": "/my/messages/:messageId"
+      },
+      "features/users/pages/my-profile-page": {
+        "id": "features/users/pages/my-profile-page",
+        "parentId": "root",
+        "file": "features/users/pages/my-profile-page.tsx",
+        "path": "/my/profile"
+      },
+      "features/users/pages/settings-page": {
+        "id": "features/users/pages/settings-page",
+        "parentId": "root",
+        "file": "features/users/pages/settings-page.tsx",
+        "path": "/my/settings"
+      },
+      "features/users/pages/notifications-page": {
+        "id": "features/users/pages/notifications-page",
+        "parentId": "root",
+        "file": "features/users/pages/notifications-page.tsx",
+        "path": "/my/notifications"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "common/pages/index-page.tsx",
+            "index": true
+          },
+          {
+            "file": "common/pages/health-page.tsx",
+            "path": "/health"
+          },
+          {
+            "file": "api/cron/stock-notifications.tsx",
+            "path": "api/cron/stock-notifications"
+          },
+          {
+            "file": "common/pages/home-page.tsx",
+            "path": "home"
+          },
+          {
+            "file": "features/stocks/pages/stocks-page.tsx",
+            "path": "stocks"
+          },
+          {
+            "file": "features/stocks/pages/new-stock-page.tsx",
+            "path": "stocks/new"
+          },
+          {
+            "file": "features/stocks/pages/edit-stock-page.tsx",
+            "path": "stocks/:id/edit"
+          },
+          {
+            "file": "features/stocks/pages/delete-stock.tsx",
+            "path": "stocks/:id/delete"
+          },
+          {
+            "file": "features/users/pages/welcome-page.tsx",
+            "path": "/welcome"
+          },
+          {
+            "file": "features/stocks/pages/toggle-hidden-stock.tsx",
+            "path": "stocks/:id/toggle-hidden"
+          },
+          {
+            "file": "features/stocks/pages/toggle-notification-stock.tsx",
+            "path": "stocks/:id/toggle-notification"
+          },
+          {
+            "file": "features/ideas/pages/ideas-page.tsx",
+            "index": true,
+            "path": "/ideas"
+          },
+          {
+            "file": "features/ideas/pages/idea-page.tsx",
+            "path": "/ideas/:ideaId"
+          },
+          {
+            "file": "features/auth/layouts/auth-layout.tsx",
+            "children": [
+              {
+                "file": "features/auth/pages/login-page.tsx",
+                "path": "/auth/login"
+              },
+              {
+                "file": "features/auth/pages/join-page.tsx",
+                "path": "/auth/join"
+              },
+              {
+                "file": "features/auth/pages/logout-page.tsx",
+                "path": "/auth/logout"
+              },
+              {
+                "file": "features/auth/pages/opt-start-page.tsx",
+                "path": "/auth/opt/start"
+              },
+              {
+                "file": "features/auth/pages/opt-complete-page.tsx",
+                "path": "/auth/opt/complete"
+              },
+              {
+                "file": "features/auth/pages/social-start-page.tsx",
+                "path": "/auth/social/:provider/start"
+              },
+              {
+                "file": "features/auth/pages/social-complete-page.tsx",
+                "path": "/auth/social/:provider/complete"
+              }
+            ]
+          },
+          {
+            "file": "features/users/layouts/dashboard-layout.tsx",
+            "children": [
+              {
+                "file": "features/users/pages/dashboard-page.tsx",
+                "index": true,
+                "path": "/my/dashboard"
+              },
+              {
+                "file": "features/users/pages/dashboard-ideas-page.tsx",
+                "path": "/my/dashboard/ideas"
+              }
+            ]
+          },
+          {
+            "file": "features/users/layouts/messages-layout.tsx",
+            "children": [
+              {
+                "file": "features/users/pages/messages-page.tsx",
+                "index": true,
+                "path": "/my/messages"
+              },
+              {
+                "file": "features/users/pages/message-page.tsx",
+                "path": "/my/messages/:messageId"
+              }
+            ]
+          },
+          {
+            "file": "features/users/pages/my-profile-page.tsx",
+            "path": "/my/profile"
+          },
+          {
+            "file": "features/users/pages/settings-page.tsx",
+            "path": "/my/settings"
+          },
+          {
+            "file": "features/users/pages/notifications-page.tsx",
+            "path": "/my/notifications"
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

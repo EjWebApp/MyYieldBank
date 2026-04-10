@@ -1,5 +1,5 @@
-import{SupabaseClient} from "@supabase/supabase-js";
-import type { Database } from "~/supa-client";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { type Database, isInvalidRefreshSessionError } from "~/supa-client";
 import { redirect } from "react-router";
 
 export const getUserProfile = async (
@@ -27,9 +27,16 @@ export const getUserProfile = async (
   return data;
 };
 
-export const getLoggedInUserId = async (client: SupabaseClient<Database>) => {
+export const getLoggedInUserId = async (
+  client: SupabaseClient<Database>,
+  headers: Headers
+) => {
   const { data, error } = await client.auth.getUser();
   if (error || data.user === null) {
+    if (error && isInvalidRefreshSessionError(error)) {
+      await client.auth.signOut();
+      throw redirect("/auth/login", { headers });
+    }
     throw redirect("/auth/login");
   }
   return data.user.id;

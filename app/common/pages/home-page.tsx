@@ -5,34 +5,24 @@ import { ko } from "date-fns/locale";
 import { StockCard } from "../../features/stocks/components/stock-card";
 import type { Route } from "./+types/home-page";
 import { getStockHoldings } from "~/features/stocks/queries";
-import { getLoggedInUserId } from "~/features/users/queries";
-import { makeSSRClient } from "~/supa-client";
 import { Button } from "~/common/components/ui/button";
+
+function isRedirectResponse(value: unknown): value is Response {
+  return value instanceof Response && value.status >= 300 && value.status < 400;
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   console.log('[HomePage] loader 시작');
   const url = new URL(request.url);
   const stocksOnly = url.searchParams.get('stocks-only') === 'true';
-  // stocks-only 모드에서는 인증 체크 없이 주식 데이터만 가져오기
-  if (!stocksOnly) {
-    console.log('[HomePage] 사용자인증 시작');
-    try {
-      const{client} = makeSSRClient(request);
-      // getLoggedInUserId는 인증되지 않은 경우 redirect를 throw하므로
-      // redirect는 catch하지 않고 그대로 전파해야 함
-      await getLoggedInUserId(client);
-      console.log('[HomePage] 사용자인증 완료');
-    } catch (error) {
-      console.error('[HomePage] 인증 에러:', error);
-      // redirect는 그대로 전파
-      throw error;
-    }
-  } else {
-    console.log('[HomePage] 주식 데이터만 갱신 (인증 체크 스킵)');
+  if (stocksOnly) {
+    console.log('[HomePage] 주식 데이터만 갱신 (fetcher 등)');
   }
   try {
     const stocks = await getStockHoldings(request);
     return { stocks };
   } catch (error) {
+    if (isRedirectResponse(error)) throw error;
     console.error('[HomePage] loader 에러:', error);
     return { stocks: [] };
   }

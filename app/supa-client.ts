@@ -91,7 +91,18 @@ export const browserClient = new Proxy({} as ReturnType<typeof createBrowserClie
   }
 });
 
-export const makeSSRClient = (request: Request) => {
+type SSRClientBundle = {
+  client: ReturnType<typeof createServerClient<Database>>;
+  headers: Headers;
+};
+
+/** 한 HTTP 요청 안에서 root·자식 loader가 각각 makeSSRClient를 호출해도 동일 인스턴스를 쓰게 해 리프레시/에러 로그 중복을 줄임 */
+const ssrClientByRequest = new WeakMap<Request, SSRClientBundle>();
+
+export const makeSSRClient = (request: Request): SSRClientBundle => {
+  const existing = ssrClientByRequest.get(request);
+  if (existing) return existing;
+
   const headers = new Headers();
   const serverSideClient = createServerClient<Database>(
     getSupabaseUrl(),
@@ -116,8 +127,18 @@ export const makeSSRClient = (request: Request) => {
     }
   );
 
-  return {
-    client: serverSideClient,
-    headers,
-  };
+  const bundle = { client: serverSideClient, headers };
+  ssrClientByRequest.set(request, bundle);
+  return bundle;
 };
+
+/** refresh token 폐기/불일치 시 getUser()가 내는 오류 — 쿠키를 지우지 않으면 매 요청마다 리프레시 재시도 */
+export function isInvalidRefreshSessionError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const e = error as { code?: string; message?: string };
+  return (
+    e.code === "refresh_token_not_found" ||
+    (typeof e.message === "string" &&
+      e.message.toLowerCase().includes("refresh token"))
+  );
+}

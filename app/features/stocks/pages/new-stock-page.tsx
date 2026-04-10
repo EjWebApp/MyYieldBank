@@ -25,8 +25,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export async function action({ request }: Route.ActionArgs) {
   // 사용자 인증 확인
-  const { client } = makeSSRClient(request);
-  const profileId = await getLoggedInUserId(client);
+  const { client, headers } = makeSSRClient(request);
+  const profileId = await getLoggedInUserId(client, headers);
   const formData = await request.formData();
   const symbol = formData.get("symbol") as string;
   const name = formData.get("name") as string;

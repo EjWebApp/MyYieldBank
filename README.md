@@ -190,9 +190,7 @@ stock-catalog.ts의 모듈 레벨 코드:
     npm install @react-email/components
 
 # 2026-02-13
-[] 토스결제
-   npm install @tosspayments/tosspayments-sdk
-
+[] 결제 모듈 연동 검토
 # 2026-02-15
 [] vercel에 배포
 npm i @vercel/react-router ->vercel.com
@@ -240,3 +238,12 @@ npm i @vercel/react-router ->vercel.com
 
    - www → parkingpage.namecheap.com 삭제
    - DNS는 Cloudflare에서만 수정(namecheap에서 제공공)
+
+# 2026-04-10
+
+## Railway
+- 이 프로젝트는 **Node**(React Router serve)이므로 `uvicorn main:app` 같은 **Python ASGI 시작 명령을 쓰면 안 됨**. 루트 `railway.json`: 빌드는 Nixpacks, **시작은 `npm run start`**, 헬스체크는 **`GET /health`**.
+
+## Supabase SSR (무효 refresh 토큰 / 로그 노이즈)
+- 쿠키만 남고 세션은 서버에 없을 때 `refresh_token_not_found`가 날 수 있음. **`getLoggedInUserId`**: 해당 계열 오류면 **`signOut()` 후 `redirect('/auth/login', { headers })`** 로 응답에 쿠키 제거. **`root` loader**: `data({ user }, { headers })`로 세션 갱신 시 **`Set-Cookie` 누락 방지**.
+- **`makeSSRClient(request)`**: `WeakMap`으로 **요청당 SSR 클라이언트 1개**만 쓰게 해 root·loader 간 **중복 리프레시·에러 로그 감소**. 홈 로더는 `getStockHoldings`가 이미 인증하므로 **앞단 중복 인증 제거**; `redirect`는 `catch`에서 **삼키지 않고 재throw**.

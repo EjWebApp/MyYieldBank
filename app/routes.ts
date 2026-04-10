@@ -2,6 +2,7 @@ import { type RouteConfig, index, route, prefix, layout } from "@react-router/de
 
 export default [
     index("common/pages/index-page.tsx"),
+    route("/health", "common/pages/health-page.tsx"),
     route("api/cron/stock-notifications", "api/cron/stock-notifications.tsx"),
     route("home", "common/pages/home-page.tsx"),
     route("stocks", "features/stocks/pages/stocks-page.tsx"),

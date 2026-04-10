@@ -1,15 +1,17 @@
-import { Button } from "~/common/components/ui/button";
 import { Link, useLoaderData, useRevalidator } from "react-router";
 import type { Route } from "./+types/stocks-page";
 import { StockCard } from "../components/stock-card";
 import { Hero } from "~/common/components/hero";
-//import { getAssetWithPrices } from "~/lib/stock-util";
 import { getStockHoldings } from "../queries";
 import { isMarketOpen } from "~/lib/utils";
 import { useEffect } from "react";
-export async function loader({request}: Route.LoaderArgs) {
+import { Button } from "~/common/components/ui/button";
+
+export async function loader({ request }: Route.LoaderArgs) {
   const stocksWithPrices = await getStockHoldings(request);
-  return { stocks: stocksWithPrices };
+  return {
+    stocks: stocksWithPrices,
+  };
 }
 
 export const meta: Route.MetaFunction = () => {
@@ -40,10 +42,10 @@ export default function StocksPage() {
     <div className="space-y-20">
       <Hero title="종목" subtitle="보유한 종목을 관리합니다." />
       <div className="flex justify-end">
-            <Button asChild>
-              <Link to="/stocks/new">종목 추가</Link>
-            </Button>
-        </div>
+        <Button asChild>
+          <Link to="/stocks/new">종목 추가</Link>
+        </Button>
+      </div>
       <div className="grid grid-cols-3 gap-4">
         {stocks && stocks.length > 0 ? (
           stocks.map((stock) => (

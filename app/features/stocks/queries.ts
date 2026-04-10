@@ -7,8 +7,8 @@ import { getLoggedInUserId } from "~/features/users/queries";
 
 export const getStockHoldings = async (request: Request) => {
     try {
-        const { client } = makeSSRClient(request);
-        const profileId = await getLoggedInUserId(client);
+        const { client, headers } = makeSSRClient(request);
+        const profileId = await getLoggedInUserId(client, headers);
         const { data, error } = await client.from("stock_holdings").select("*").eq("profile_id", profileId);
         
         if (error) {
