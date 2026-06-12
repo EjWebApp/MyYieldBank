@@ -254,3 +254,7 @@ npm i @vercel/react-router ->vercel.com
 ## Supabase SSR (무효 refresh 토큰 / 로그 노이즈)
 - 쿠키만 남고 세션은 서버에 없을 때 `refresh_token_not_found`가 날 수 있음. **`getLoggedInUserId`**: 해당 계열 오류면 **`signOut()` 후 `redirect('/auth/login', { headers })`** 로 응답에 쿠키 제거. **`root` loader**: `data({ user }, { headers })`로 세션 갱신 시 **`Set-Cookie` 누락 방지**.
 - **`makeSSRClient(request)`**: `WeakMap`으로 **요청당 SSR 클라이언트 1개**만 쓰게 해 root·loader 간 **중복 리프레시·에러 로그 감소**. 홈 로더는 `getStockHoldings`가 이미 인증하므로 **앞단 중복 인증 제거**; `redirect`는 `catch`에서 **삼키지 않고 재throw**.
+
+# 2026-06-12
+
+vercel 프리 요금제를 사용하기위해 깃허브 설정을 public으로 변경
