@@ -1,5 +1,12 @@
 # Welcome to React Router!
 
+## 프로젝트 기술 스택
+
+- 언어: TypeScript
+- 프레임워크: React 19, React Router v7, Vite
+- 스타일링: Tailwind CSS v4
+- 서버/백엔드: React Router 서버 렌더링, Supabase, Drizzle ORM, PostgreSQL
+
 A modern, production-ready template for building full-stack React applications using React Router.
 
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
