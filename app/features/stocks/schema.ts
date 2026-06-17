@@ -10,6 +10,8 @@ export const stockHoldings = pgTable("stock_holdings", {
     name: text().notNull(),
     // 종목 코드
     symbol: text().notNull(),
+    // 구매 수량
+    quantity: integer("quantity").notNull().default(1),
     // 구매 가격
     purchase_price: integer().notNull(),
     // 구매 일자
@@ -53,6 +55,10 @@ export const stockNotifications = pgTable("stock_notifications", {
     }).notNull(),
     // 알림 타입 ('take_profit' | 'stop_loss')
     notification_type: text().notNull(),
+    // 종목명 (알림 표시용)
+    stock_name: text(),
+    // 알림 발생 시점 수익률 (알림 표시용)
+    profit_rate: numeric("profit_rate", { precision: 10, scale: 2 }),
     // 발송 시간
     sent_at: timestamp().notNull().defaultNow(),
     // 생성일

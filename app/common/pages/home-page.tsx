@@ -20,7 +20,14 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
   try {
     const stocks = await getStockHoldings(request);
-    return { stocks };
+    // 계산된 totals (투자금/총자산/수익 등)
+    const invested = stocks.reduce((sum: number, s: any) => sum + ((s.purchasePrice ?? 0) * (s.purchaseQuantity ?? 1)), 0);
+    const totalProfit = stocks.reduce((sum: number, s: any) => sum + (s.currentProfit ?? 0), 0);
+    const totalAssets = invested + totalProfit;
+    const profitRate = invested > 0 ? (totalProfit / invested) * 100 : 0;
+
+    const totals = { invested, totalAssets, totalProfit, profitRate };
+    return { stocks, totals };
   } catch (error) {
     if (isRedirectResponse(error)) throw error;
     console.error('[HomePage] loader 에러:', error);
@@ -62,23 +69,39 @@ export default function HomePage() {
     };
   }, []); // 빈 배열: 컴포넌트 마운트 시 한 번만 설정
 
+  const totals = fetcher.data?.totals ?? loaderData.totals ?? null;
+
   return (
     <div className="space-y-40">
       <div className="grid grid-cols-1 gap-4">
         <div>
-          <div className="flex items-center justify-between">
-            <h2 className="text-5xl font-bold leading-tight tracking-tight">
-              내 자산
-            </h2>
-            <h3 className="text-4xl leading-tight tracking-tight">
-              {format(currentTime, "yyyy-MM-dd HH:mm:ss", { locale: ko })}
-            </h3>
+          <div className="flex items-start justify-between">
+            <div className="text-left">
+              {totals ? (
+                <>
+                  <div className="text-4xl lg:text-5xl font-extrabold">
+                    {new Intl.NumberFormat('ko-KR').format(Math.round(totals.totalAssets))}원
+                  </div>
+                  <div className={`text-lg ${totals.totalProfit >= 0 ? 'text-red-500' : 'text-green-500'}`}>
+                    {totals.profitRate >= 0 ? '+' : ''}{totals.profitRate.toFixed(2)}% ({new Intl.NumberFormat('ko-KR').format(Math.round(totals.totalProfit))}원)
+                  </div>
+                  <div className="text-sm text-muted-foreground">총 투자금 {new Intl.NumberFormat('ko-KR').format(Math.round(totals.invested))}원</div>
+                </>
+              ) : null}
+            </div>
+
+            <div className="text-right">
+              <h2 className="text-3xl lg:text-5xl font-bold leading-tight tracking-tight">
+                내 자산
+              </h2>
+              <h3 className="text-xl lg:text-4xl leading-tight tracking-tight">
+                {format(currentTime, "yyyy-MM-dd HH:mm:ss", { locale: ko })}
+              </h3>
+            </div>
           </div>
-          <p className="text-xl font-light text-foreground">
-            보유한 자산의 현재 상태를 확인하세요.
-          </p>
-        </div>
+          </div>
       </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {hasNoStocks ? (
           <div className="col-span-full flex flex-col items-center justify-center text-center py-16 px-4 space-y-6">

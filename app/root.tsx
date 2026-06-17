@@ -17,6 +17,8 @@ import Navigation from "./common/components/navigation";
 import { Settings } from "luxon";
 import { isInvalidRefreshSessionError, makeSSRClient } from "./supa-client";
 import { getAccessToken } from "./lib/stock-api";
+import { getStockHoldings } from "./features/stocks/queries";
+import { useStockNotifications } from "./lib/use-stock-notifications";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,8 +62,20 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     // 토큰 발급 실패는 로그만 남기고 앱 실행은 계속
     console.error('[Root Loader] KIS 토큰 초기화 실패 (무시됨):', error);
   }
+  // 사용자의 보유 종목을 불러와 총투자금/총자산/수익 계산
+  let totals = { invested: 0, totalAssets: 0, totalProfit: 0, profitRate: 0 };
+  try {
+    const stocks = await getStockHoldings(request);
+    const invested = stocks.reduce((sum, s) => sum + ((s.purchasePrice ?? 0) * (s.purchaseQuantity ?? 1)), 0);
+    const totalProfit = stocks.reduce((sum, s) => sum + (s.currentProfit ?? 0), 0);
+    const totalAssets = invested + totalProfit;
+    const profitRate = invested > 0 ? (totalProfit / invested) * 100 : 0;
+    totals = { invested, totalAssets, totalProfit, profitRate };
+  } catch (err) {
+    console.error('[Root Loader] failed to calculate totals:', err);
+  }
   
-  return data({ user }, { headers });
+  return data({ user, totals }, { headers });
 };
 export function Layout({ children }: { children: React.ReactNode }) {
   Settings.defaultLocale = "ko-KR";
@@ -89,12 +103,15 @@ export default function App({loaderData}: Route.ComponentProps) {
   const navigation=useNavigation();
   const isLoading=navigation.state==="loading";
   const isLoggedIn=loaderData.user!==null;
+  const totals = (loaderData as any).totals ?? null;
+  useStockNotifications(loaderData.user?.id ?? null);
   return (
     <div className={pathname.includes("/auth/") ? "" : "px-5 py-28 lg:px-20"}>
       {
         pathname.includes("/auth/")? null:
-          ( <Navigation isLoggedIn={isLoggedIn} hasNotification={false} hasMessage={false} />)
+          ( <Navigation isLoggedIn={isLoggedIn} hasNotification={false} hasMessage={false} totals={totals} />)
       }
+      
       <Outlet />
       {pathname.includes("/auth/") ? null : (
         <footer className="mt-24 border-t pt-8 text-sm text-muted-foreground">

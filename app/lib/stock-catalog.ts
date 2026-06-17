@@ -6,6 +6,14 @@ let lastUpdated: Date | null = null;
 const UPDATE_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24시간
 let refreshPromise: Promise<void> | null = null; // 갱신 중인 Promise 캐싱
 
+// 하드코드된 예외 매핑: API에 아직 반영되지 않은 종목을 여기에 추가하세요.
+// 예: "KODEX SK하이닉스단일종목레버리지": "실제종목코드"
+const HARD_CODED_MAP: Record<string, string> = {
+  "KODEX SK하이닉스단일종목레버리지": "0193T0",
+   "TIGER SK하이닉스단일종목레버리지": "0195S0",
+   "KODEX 삼성전자단일종목레버리지" : "0193W0",
+};
+
 /**
  * 공공데이터포털 API에서 종목 정보를 가져옵니다
  */
@@ -30,7 +38,6 @@ async function fetchStockCatalogFromAPI(): Promise<Record<string, string>> {
       // 인코딩되지 않은 키는 인코딩
       serviceKey = encodeURIComponent(API_KEY);
     }
-    
     const url = `https://apis.data.go.kr/1160100/service/GetKrxListedInfoService/getItemInfo?serviceKey=${serviceKey}&numOfRows=10000&pageNo=1&resultType=json`;
     
     console.log('[Stock Catalog] API 호출 URL (키 마스킹):', url.replace(serviceKey, '***'));
@@ -71,6 +78,17 @@ async function fetchStockCatalogFromAPI(): Promise<Record<string, string>> {
     items.forEach((item: any) => {
       if (item.srtnCd && item.itmsNm) {
         catalog[item.itmsNm] = item.srtnCd; // 종목명: 종목코드
+      }
+    });
+
+    // 하드코드된 매핑을 병합 (API에 없는 항목을 보완)
+    Object.keys(HARD_CODED_MAP).forEach((name) => {
+      const code = HARD_CODED_MAP[name];
+      if (code) {
+        if (!catalog[name]) {
+          catalog[name] = code;
+          console.log(`[Stock Catalog] 하드코드로 추가된 종목: ${name} -> ${code}`);
+        }
       }
     });
 
@@ -138,7 +156,10 @@ export function getStockCatalogSync(): Record<string, string> {
  */
 export function getStockCodeByName(name: string): string | undefined {
   const catalog = getStockCatalogSync();
-  return catalog[name];
+  if (catalog[name]) return catalog[name];
+  // 폴백: 하드코드 맵 확인
+  if (HARD_CODED_MAP[name]) return HARD_CODED_MAP[name];
+  return undefined;
 }
 
 /**

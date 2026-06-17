@@ -1,0 +1,1 @@
+ALTER TABLE "stock_holdings" ADD COLUMN "quantity" integer DEFAULT 1 NOT NULL;

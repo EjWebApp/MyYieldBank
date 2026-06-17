@@ -7,6 +7,7 @@ interface StockCardProps {
   timestamp: string | null;
   purchaseDate: string;
   purchasePrice: number;
+  purchaseQuantity: number;
   currentPrice: number;
   currentProfit: number;
   currentProfitRate: number;
@@ -26,6 +27,7 @@ export function StockCard({
   timestamp,
   purchaseDate,
   purchasePrice,
+  purchaseQuantity,
   currentPrice,
   currentProfit,
   currentProfitRate,
@@ -60,7 +62,11 @@ export function StockCard({
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">구매가</span>
           <span className="font-semibold">{(purchasePrice ?? 0).toLocaleString()}원</span>
-        </div>        
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-muted-foreground">수량</span>
+          <span className="font-semibold">{purchaseQuantity ?? 1}주</span>
+        </div>
         <div className="flex justify-between items-center">
           <span className="text-sm text-muted-foreground">현재가</span>
           <span className="font-semibold">{(currentPrice ?? 0).toLocaleString()}원</span>

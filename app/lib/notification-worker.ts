@@ -259,6 +259,8 @@ async function sendNotificationIfNeeded(
       holding_id: holdingId,
       profile_id: profileId,
       notification_type: notificationType,
+      stock_name: stockName,
+      profit_rate: parseFloat(profitRate.toFixed(2)),
       sent_at: new Date().toISOString(),
     });
     

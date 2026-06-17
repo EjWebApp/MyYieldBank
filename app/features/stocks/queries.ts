@@ -54,15 +54,16 @@ export const getStockHoldings = async (request: Request) => {
         // 수익률 계산 및 StockCard 형식으로 변환
         const stocksWithProfit = stocksWithPrices.map((stock) => {
             const purchase_price = stock.purchase_price ?? 0;
+            const purchase_quantity = stock.quantity ?? 1;
             const current_price = stock.current_price ?? 0;
-            const current_profit = current_price - purchase_price;
+            const current_profit = (current_price - purchase_price) * purchase_quantity;
             // timestamp를 한국시간으로 보기 좋게 포맷팅 (없으면 null)
             const timestamp = stock.timestamp 
                 ? format(new Date(stock.timestamp), "HH:mm:ss", { locale: ko })
                 : null;
             // purchase_price가 0이면 나누기 에러 방지
             const current_profit_rate = purchase_price > 0 
-                ? (current_profit / purchase_price) * 100 
+                ? ((current_price - purchase_price) / purchase_price) * 100 
                 : 0;
             
             // 날짜 파싱 (YYYY-MM-DD 형식)
@@ -76,6 +77,7 @@ export const getStockHoldings = async (request: Request) => {
                 timestamp,
                 purchaseDate,
                 purchasePrice: purchase_price,
+                purchaseQuantity: purchase_quantity,
                 currentPrice: current_price,
                 currentProfit: current_profit,
                 currentProfitRate: Number(current_profit_rate.toFixed(2)),
